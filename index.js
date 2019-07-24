@@ -14,17 +14,15 @@ function handleImage(e){
             ctx.drawImage(img,0,0);
             let imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
             readImage(imageData);
+
         }
         img.src = event.target.result;
     }
     reader.readAsDataURL(e.target.files[0]); 
     
-    
-
-   
 }
 
 function readImage(imageData){
-    imgData = imageData;
-    console.log(imgData);
+    let ret = Module._createImageSet(imageData.data, 220, imageData.width, imageData.height);
+    console.log("Returned: ", ret)
 }
