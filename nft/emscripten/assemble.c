@@ -11,7 +11,7 @@
 #include "AR2/featureSet.h"
 #include "AR2/util.h"
 #include "KPM/kpm.h"
-#include "jpegHeaders/jpeglib.h"
+#include <jpeglib.h>
 #include <setjmp.h>
 
 #define          KPM_SURF_FEATURE_DENSITY_L0    70
@@ -92,7 +92,7 @@ float EMSCRIPTEN_KEEPALIVE createImageSet( ARUint8 *image, float dpi, int xsize,
     }else{
         return 0.0f;
     }
-  
+
 }
 
 float EMSCRIPTEN_KEEPALIVE MIN(int x ,int y){
@@ -278,7 +278,7 @@ int ar2WriteImageSet( char *filename, AR2ImageSetT *imageSet )
         size_t         len;
         const char     ext[] = ".iset";
         char          *buf;
-        
+
         len = strlen(filename) + strlen(ext) + 1; // +1 for nul terminator.
         arMalloc(buf, char, len);
         sprintf(buf, "%s%s", filename, ext);
@@ -308,7 +308,7 @@ int ar2WriteImageSet( char *filename, AR2ImageSetT *imageSet )
 
         fclose(fp);
         return 0;
-        
+
     bailBadWrite:
         fclose(fp);
         return (-1);
