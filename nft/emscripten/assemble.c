@@ -11,7 +11,7 @@
 #include "AR2/featureSet.h"
 #include "AR2/util.h"
 #include "KPM/kpm.h"
-#include <jpeglib.h>
+#include "jpeglib.h"
 #include <setjmp.h>
 
 #define          KPM_SURF_FEATURE_DENSITY_L0    70
