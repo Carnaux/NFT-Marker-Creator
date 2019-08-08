@@ -127,6 +127,8 @@ FLAGS += ' -msse2';
 FLAGS += ' -msse3';
 FLAGS += ' -mssse3';
 
+var LDFLAGS = ' -L' + ARTOOLKIT5_ROOT + '/lib/SRC/AR2/';
+
 /* DEBUG FLAGS */
 var DEBUG_FLAGS = ' -g ';
 // DEBUG_FLAGS += ' -s ASSERTIONS=2 '
@@ -227,7 +229,7 @@ var compile_combine_min = format(EMCC + ' ' + INCLUDES + ' '
 	OUTPUT_PATH, OUTPUT_PATH, BUILD_MIN_FILE);
 */
 var compile_combine_min = format(EMCC + ' ' + INCLUDES + ' '
-	+ ' {OUTPUT_PATH}*.bc ' + MAIN_SOURCES
+	+ ' {OUTPUT_PATH}*.bc ' + LDFLAGS
 	+ FLAGS + ' -s WASM=0' + ' ' + DEFINES  + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
 	OUTPUT_PATH, OUTPUT_PATH, BUILD_MIN_FILE);
 
@@ -291,7 +293,7 @@ addJob(compile_arlib);
 // compile_kpm
 addJob(compile_libjpeg);
 //addJob(compile_combine);
-addJob(compile_wasm);
+//addJob(compile_wasm);
 addJob(compile_combine_min);
 // addJob(compile_all);
 
