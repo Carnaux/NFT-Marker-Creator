@@ -1,5 +1,5 @@
 //------------INCLUDES-------------
-#include <emscripten.h>
+#include <emscripten/emscripten.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -31,7 +31,7 @@ static AR2ImageT *ar2GenImageLayer1 ( ARUint8 *image, int xsize, int ysize, int 
 static AR2ImageT *ar2GenImageLayer2 ( AR2ImageT *src, float dstdpi );
 // jpeg.c
 static int jpgwrite (FILE *fp, unsigned char *image, int w, int h, int nc, float dpi, int quality);
-
+float createImageSet( ARUint8 *image, float dpi, int xsize, int ysize);
 //------------GLOBAL-------------
 AR2ImageSetT *imageSet = NULL;
 static float  dpiMin = -1.0f;
@@ -100,7 +100,7 @@ float EMSCRIPTEN_KEEPALIVE MIN(int x ,int y){
 }
 
 //------------AUX-FUNCTIONS-------------
-
+/*
 //  imageSet.c
 static AR2ImageT *ar2GenImageLayer1 ( ARUint8 *image, int xsize, int ysize, int nc, float srcdpi, float dstdpi );
 static AR2ImageT *ar2GenImageLayer2 ( AR2ImageT *src, float dstdpi );
@@ -382,7 +382,7 @@ static int jpgwrite (FILE *fp, unsigned char *image, int w, int h, int nc, float
 
     return 0;
 }
-
+*/
 #ifdef __cplusplus
 }
 #endif

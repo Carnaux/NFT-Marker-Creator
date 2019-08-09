@@ -18,16 +18,18 @@ function handleImage(e){
         }
         img.src = event.target.result;
     }
-    reader.readAsDataURL(e.target.files[0]); 
-    
+    reader.readAsDataURL(e.target.files[0]);
+
 }
 
 function readImage(imageData){
+  if(window.Module){
     let ret = Module._createImageSet(imageData.data, 220, imageData.width, imageData.height);
     console.log("Returned: ", ret)
+  }
 }
 
-function downloadIset(){
+function downloadIset(memoryFSname){
     var data = Module.FS.readFile(memoryFSname);
     console.log(data);
 }

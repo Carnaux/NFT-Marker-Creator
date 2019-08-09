@@ -114,7 +114,6 @@ var FLAGS = '' + OPTIMIZE_FLAGS;
 FLAGS += ' -Wno-warn-absolute-paths ';
 FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
 FLAGS += ' -s USE_ZLIB=1';
-FLAGS += ' -s EXTRA_EXPORTED_RUNTIME_METHODS=FS';
 //FLAGS += ' -s ERROR_ON_UNDEFINED_SYMBOLS=0';
 //FLAGS += ' -s NO_BROWSER=1 '; // for 20k less
 FLAGS += ' --memory-init-file 0 '; // for memless file
@@ -127,7 +126,8 @@ FLAGS += ' -msse2';
 FLAGS += ' -msse3';
 FLAGS += ' -mssse3';
 
-var LDFLAGS = ' -L' + ARTOOLKIT5_ROOT + '/lib/SRC/AR2/';
+
+var EXPORTED_FUNCTIONS = ' -s EXPORTED_FUNCTIONS=["_createImageSet"] -s EXTRA_EXPORTED_RUNTIME_METHODS=["FS"] ';
 
 /* DEBUG FLAGS */
 var DEBUG_FLAGS = ' -g ';
@@ -228,8 +228,8 @@ var compile_combine_min = format(EMCC + ' ' + INCLUDES + ' '
 	+ FLAGS + ' ' + DEFINES + PRE_FLAGS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
 	OUTPUT_PATH, OUTPUT_PATH, BUILD_MIN_FILE);
 */
-var compile_combine_min = format(EMCC + ' ' + INCLUDES + ' '
-	+ ' {OUTPUT_PATH}*.bc ' + LDFLAGS
+var compile_combine_min = format(EMCC + ' '  + INCLUDES + ' '
+	+ ' {OUTPUT_PATH}*.bc ' + MAIN_SOURCES + EXPORTED_FUNCTIONS
 	+ FLAGS + ' -s WASM=0' + ' ' + DEFINES  + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
 	OUTPUT_PATH, OUTPUT_PATH, BUILD_MIN_FILE);
 
