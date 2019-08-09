@@ -1,5 +1,5 @@
 //------------INCLUDES-------------
-#include <emscripten.h>
+#include <emscripten/emscripten.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -11,8 +11,8 @@
 #include "AR2/featureSet.h"
 #include "AR2/util.h"
 #include "KPM/kpm.h"
-#include "jpegHeaders/jpeglib.h"
-#include <setjmp.h>
+#include "jpeglib.h"
+//#include <setjmp.h>
 
 #define          KPM_SURF_FEATURE_DENSITY_L0    70
 #define          KPM_SURF_FEATURE_DENSITY_L1   100
@@ -31,7 +31,7 @@ static AR2ImageT *ar2GenImageLayer1 ( ARUint8 *image, int xsize, int ysize, int 
 static AR2ImageT *ar2GenImageLayer2 ( AR2ImageT *src, float dstdpi );
 // jpeg.c
 static int jpgwrite (FILE *fp, unsigned char *image, int w, int h, int nc, float dpi, int quality);
-
+float createImageSet( ARUint8 *image, float dpi, int xsize, int ysize);
 //------------GLOBAL-------------
 AR2ImageSetT *imageSet = NULL;
 static float  dpiMin = -1.0f;
@@ -92,7 +92,7 @@ float EMSCRIPTEN_KEEPALIVE createImageSet( ARUint8 *image, float dpi, int xsize,
     }else{
         return 0.0f;
     }
-  
+
 }
 
 float EMSCRIPTEN_KEEPALIVE MIN(int x ,int y){
@@ -100,7 +100,7 @@ float EMSCRIPTEN_KEEPALIVE MIN(int x ,int y){
 }
 
 //------------AUX-FUNCTIONS-------------
-
+/*
 //  imageSet.c
 static AR2ImageT *ar2GenImageLayer1 ( ARUint8 *image, int xsize, int ysize, int nc, float srcdpi, float dstdpi );
 static AR2ImageT *ar2GenImageLayer2 ( AR2ImageT *src, float dstdpi );
@@ -278,7 +278,7 @@ int ar2WriteImageSet( char *filename, AR2ImageSetT *imageSet )
         size_t         len;
         const char     ext[] = ".iset";
         char          *buf;
-        
+
         len = strlen(filename) + strlen(ext) + 1; // +1 for nul terminator.
         arMalloc(buf, char, len);
         sprintf(buf, "%s%s", filename, ext);
@@ -308,7 +308,7 @@ int ar2WriteImageSet( char *filename, AR2ImageSetT *imageSet )
 
         fclose(fp);
         return 0;
-        
+
     bailBadWrite:
         fclose(fp);
         return (-1);
@@ -382,7 +382,7 @@ static int jpgwrite (FILE *fp, unsigned char *image, int w, int h, int nc, float
 
     return 0;
 }
-
+*/
 #ifdef __cplusplus
 }
 #endif

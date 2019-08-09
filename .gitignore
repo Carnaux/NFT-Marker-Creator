@@ -1,0 +1,5 @@
+doc/reference
+node_modules
+nft/build/*.bc
+nft/emscripten/libjpeg/
+nft/emscripten/artoolkit5/
