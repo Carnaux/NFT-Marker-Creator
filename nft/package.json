@@ -20,6 +20,7 @@
     "url": "https://github.com/Carnaux/NFT-Marker-Creator/issues"
   },
   "dependencies": {
+    "glob": "^7.1.4",
     "json2csv": "^4.1.5"
   },
   "devDependencies": {
