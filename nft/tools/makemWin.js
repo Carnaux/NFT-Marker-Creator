@@ -97,7 +97,7 @@ ar_sources.push(srcTest+'/ARUtil/file_utils.c');
 // 	//'Video/videoLuma.c',
 // 	//'Gl/gsub_lite.c',
 // ].map(function(src) {
-	
+
 // 	return path.resolve(__dirname, ARTOOLKIT5_ROOT + '/lib/SRC/', src);
 // });
 
@@ -203,20 +203,21 @@ function format(str) {
 	return str;
 }
 
-
 // Lib JPEG Compilation
 
 // Memory Allocations
 // jmemansi.c jmemname.c jmemnobs.c jmemdos.c jmemmac.c
-var libjpeg_sources = 'jcapimin.c jcapistd.c jccoefct.c jccolor.c jcdctmgr.c jchuff.c \
-		jcinit.c jcmainct.c jcmarker.c jcmaster.c jcomapi.c jcparam.c \
-		jcphuff.c jcprepct.c jcsample.c jctrans.c jdapimin.c jdapistd.c \
-		jdatadst.c jdatasrc.c jdcoefct.c jdcolor.c jddctmgr.c jdhuff.c \
-		jdinput.c jdmainct.c jdmarker.c jdmaster.c jdmerge.c jdphuff.c \
-		jdpostct.c jdsample.c jdtrans.c jerror.c jfdctflt.c jfdctfst.c \
-		jfdctint.c jidctflt.c jidctfst.c jidctint.c jidctred.c jquant1.c \
-		jquant2.c jutils.c jmemmgr.c \
-		jmemansi.c'.split(/\s+/).join(' /emscripten/libjpeg/');
+var libjpeg_sources = ['jcapimin.c', 'jcapistd.c', 'jccoefct.c',
+		'jccolor.c', 'jcdctmgr.c', 'jchuff.c', 'jcinit.c', 'jcmainct.c',
+		'jcmarker.c', 'jcmaster.c', 'jcomapi.c', 'jcparam.c','jcphuff.c',
+		'jcprepct.c', 'jcsample.c', 'jctrans.c', 'jdapimin.c', 'jdapistd.c',
+		'jdatadst.c', 'jdatasrc.c', 'jdcoefct.c', 'jdcolor.c', 'jddctmgr.c', 'jdhuff.c',
+		'jdinput.c', 'jdmainct.c', 'jdmarker.c', 'jdmaster.c', 'jdmerge.c', 'jdphuff.c',
+		'jdpostct.c', 'jdsample.c', 'jdtrans.c', 'jerror.c', 'jfdctflt.c', 'jfdctfst.c',
+		'jfdctint.c', 'jidctflt.c', 'jidctfst.c', 'jidctint.c', 'jidctred.c', 'jquant1.c',
+		'jquant2.c', 'jutils.c', 'jmemmgr.c', 'jmemansi.c'].map(function(src) {
+			return path.resolve(__dirname, LIBJPEG_ROOT, src);
+		});
 
 function clean_builds() {
 	try {
@@ -248,7 +249,7 @@ var compile_arlib = format(EMCC + ' ' + INCLUDES + ' '
  		OUTPUT_PATH);
 
 var compile_libjpeg = format(EMCC + ' ' + INCLUDES + ' '
-    + path.resolve(__dirname, LIBJPEG_ROOT) + '/' + libjpeg_sources
+    + libjpeg_sources.join(' ')
 	+ FLAGS + ' ' + DEFINES + ' -o {OUTPUT_PATH}libjpeg.bc ',
 		OUTPUT_PATH);
 
