@@ -48,4 +48,3 @@ To build it is needed to setup the emscripten enviroment.
      - html/css/js files for testing the Editor
      
  #### Build system created by Kalwalt - https://github.com/kalwalt
-
