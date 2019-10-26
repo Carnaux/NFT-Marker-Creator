@@ -1,0 +1,3 @@
+[submodule "nft/emscripten/artoolkit5"]
+	path = nft/emscripten/artoolkit5
+	url = git@github.com/artoolkit/artoolkit5.git
