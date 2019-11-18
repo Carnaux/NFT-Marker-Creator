@@ -3,33 +3,58 @@ var imageLoader = document.getElementById('imageLoader');
 var canvas = document.getElementById('imageCanvas');
 var ctx = canvas.getContext('2d');
 
+var reader = new FileReader();
 
 
-
-function handleImage(e){
+function handleImage(e){  
   EXIF.getData(e.target.files[0], function() {
+    var allMetaData = EXIF.getAllTags(this);
+    //console.log(JSON.stringify(allMetaData, null, "\t"))
   
-    var dpiX = EXIF.getTag(this, "XResolution");
-    var dpiY = EXIF.getTag(this, "YResolution");
+    var dpiX = parseFloat(EXIF.getTag(this, "XResolution"));
+    var dpiY = parseFloat(EXIF.getTag(this, "YResolution"));
 
-    var nc = EXIF.getTag(this, "ColorSpace");
+    var nc = 1;
+
     var dpi = Math.min(dpiX, dpiY);
+
+    var cpn = EXIF.getTag(this, "ComponentsConfiguration")
+
+    if(isNaN(dpi) || dpi == null){
+      dpi = 72;
+    }
+    if( cpn == "YCbCr"){
+      nc = 1;
+    }
+    // if(isNaN(nc) || nc == null){
+    //   nc = 1;
+    // }
     console.log("imageExif, dpiX: ", dpiX, " dpiY: ", dpiY, " nc: ", nc )
-    var reader = new FileReader();
+    
     reader.onload = function(event){
-        var img = new Image();
-        img.onload = function(){
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img,0,0);
-            var imgData = ctx.getImageData(0,0,img.width,img.height);
-            console.log("arr", imgData)
-            Module._createImageSet( imgData.data, dpi, img.width, img.height, nc)
-        }
-        img.src = event.target.result;
+      let array = getUint8(reader.result);
+      console.log(e.target.files[0])
+      var img = new Image();
+      img.onload = function(){
+          // base64toHEX(reader.result)
+
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img,0,0);
+          var imgData = ctx.getImageData(0,0,img.width,img.height);
+          console.log(imgData)
+
+          console.log("arr", array)
+          let cmdArr = [e.target.files[0].name]
+          Module._createImageSet( array, dpi, img.width, img.height, nc, 2, cmdArr)
+      }
+      img.src = event.target.result;
     }
     reader.readAsDataURL(e.target.files[0]);
+
+   
   });
+
 }
 
 function readImage(imageData){
@@ -111,7 +136,6 @@ function downloadIset(){
   let content = Module.FS.readFile(filenameIset);
   let contentFset = Module.FS.readFile(filenameFset);
   let contentFset3 = Module.FS.readFile(filenameFset3);
-  let imgCreate = Module.FS.readFile("tempFileRead.jpeg");
 
   var a = document.createElement('a');
   a.download = filenameIset;
@@ -128,11 +152,6 @@ function downloadIset(){
   c.href = URL.createObjectURL(new Blob([contentFset3], {type: mime}));
   c.style.display = 'none';
 
-  var d = document.createElement('a');
-  d.download = imgCreate;
-  d.href = URL.createObjectURL(new Blob([contentFset3], {type: mime}));
-  d.style.display = 'none';
-
   document.body.appendChild(a);
   a.click();
 
@@ -141,8 +160,38 @@ function downloadIset(){
 
   document.body.appendChild(c);
   c.click();
-
-  document.body.appendChild(d);
-  d.click();
 }
 
+function getUint8(str){
+  let base64 = str.substr(23, str.length);
+  var raw = atob(base64);
+  var rawLength = raw.length;
+  var array = new Uint8Array(new ArrayBuffer(rawLength));
+
+  for(i = 0; i < rawLength; i++) {
+    array[i] = raw.charCodeAt(i);
+  }
+  return array;
+}
+
+
+function base64toHEX(str) {
+  let base64 = str.substr(23, str.length);
+  
+  var raw = atob(base64);
+
+  var HEX = '';
+
+  for (let i = 0; i < raw.length; i++ ) {
+
+    var _hex = raw.charCodeAt(i).toString(16)
+
+    HEX += (_hex.length==2?_hex:'0'+_hex);
+
+  }
+  console.log(HEX.toUpperCase())
+  // return HEX.toUpperCase();
+
+
+ 
+}
