@@ -3,33 +3,59 @@ var imageLoader = document.getElementById('imageLoader');
 var canvas = document.getElementById('imageCanvas');
 var ctx = canvas.getContext('2d');
 
+var reader = new FileReader();
 
+var name;
 
-
-function handleImage(e){
+function handleImage(e){  
   EXIF.getData(e.target.files[0], function() {
+    var allMetaData = EXIF.getAllTags(this);
   
-    var dpiX = EXIF.getTag(this, "XResolution");
-    var dpiY = EXIF.getTag(this, "YResolution");
+    var dpiX = parseFloat(EXIF.getTag(this, "XResolution"));
+    var dpiY = parseFloat(EXIF.getTag(this, "YResolution"));
 
-    var nc = EXIF.getTag(this, "ColorSpace");
+    var nc = 3;
+
     var dpi = Math.min(dpiX, dpiY);
-    console.log("imageExif, dpiX: ", dpiX, " dpiY: ", dpiY, " nc: ", nc )
-    var reader = new FileReader();
+
+    var cpn = EXIF.getTag(this, "ComponentsConfiguration")
+
+    if(isNaN(dpi) || dpi == null){
+      dpi = 72;
+    }
+    if( cpn == "YCbCr"){
+      nc = 3;
+    }
+
+    console.log("imageExif, dpiX: ", dpiX, " dpiY: ", dpiY, " nc: ", nc );
+
+    name = e.target.files[0].name;
+    
     reader.onload = function(event){
-        var img = new Image();
-        img.onload = function(){
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img,0,0);
-            var imgData = ctx.getImageData(0,0,img.width,img.height);
-            console.log("arr", imgData)
-            Module._createImageSet( imgData.data, dpi, img.width, img.height, nc)
-        }
-        img.src = event.target.result;
+      let array = getUint8(reader.result);
+      var img = new Image();
+      img.onload = function(){
+
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img,0,0);
+          var imgData = ctx.getImageData(0,0,300,300);
+         
+          let cmdArr = [name];
+
+          let heapSpace = Module._malloc( array.length * array.BYTES_PER_ELEMENT); // 1
+          Module.HEAPU8.set( array, heapSpace); // 2 
+
+          Module._createImageSet( heapSpace, dpi, img.width, img.height, nc, name, 2, cmdArr);
+          Module._free(heapSpace);
+      }
+      img.src = event.target.result;
     }
     reader.readAsDataURL(e.target.files[0]);
+
+   
   });
+
 }
 
 function readImage(imageData){
@@ -103,15 +129,20 @@ function readImage(imageData){
 }
 
 function downloadIset(){
+  let rootPath = "/marker/"
   let filenameIset = "asa.iset";
   let filenameFset = "asa.fset";
   let filenameFset3 = "asa.fset3";
   let mime = "application/octet-stream";
 
+
+  console.log(Module);
   let content = Module.FS.readFile(filenameIset);
+  // let content = Module.FS.readFile(rootPath + filenameIset);
   let contentFset = Module.FS.readFile(filenameFset);
-  let contentFset3 = Module.FS.readFile(filenameFset3);
-  let imgCreate = Module.FS.readFile("tempFileRead.jpeg");
+  let contentFset3 = Module.FS.readFile( filenameFset3);
+
+
 
   var a = document.createElement('a');
   a.download = filenameIset;
@@ -128,11 +159,6 @@ function downloadIset(){
   c.href = URL.createObjectURL(new Blob([contentFset3], {type: mime}));
   c.style.display = 'none';
 
-  var d = document.createElement('a');
-  d.download = imgCreate;
-  d.href = URL.createObjectURL(new Blob([contentFset3], {type: mime}));
-  d.style.display = 'none';
-
   document.body.appendChild(a);
   a.click();
 
@@ -141,8 +167,40 @@ function downloadIset(){
 
   document.body.appendChild(c);
   c.click();
-
-  document.body.appendChild(d);
-  d.click();
 }
 
+function getUint8(str){
+  let base64 = str.substr(23, str.length);
+  var raw = atob(base64);
+  var rawLength = raw.length;
+  var array = new Uint8Array(new ArrayBuffer(rawLength));
+
+  for(i = 0; i < rawLength; i++) {
+    array[i] = raw.charCodeAt(i);
+  }
+
+  console.log("arr", array)
+  return array;
+}
+
+
+function base64toHEX(str) {
+  let base64 = str.substr(23, str.length);
+  
+  var raw = atob(base64);
+
+  var HEX = '';
+
+  for (let i = 0; i < raw.length; i++ ) {
+
+    var _hex = raw.charCodeAt(i).toString(16)
+
+    HEX += (_hex.length==2?_hex:'0'+_hex);
+
+  }
+  console.log(HEX.toUpperCase())
+  // return HEX.toUpperCase();
+
+
+ 
+}

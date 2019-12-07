@@ -24,7 +24,7 @@ if (!EMSCRIPTEN_ROOT) {
 var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'emcc') : 'emcc';
 var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'em++') : 'em++';
 var OPTIMIZE_FLAGS = ' -O3 '; // -Oz for smallest size
-var MEM = 256 * 1024 * 1024; // 64MB
+var MEM = (256 *1024 * 1024) ; // 64MB
 
 
 var SOURCE_PATH = path.resolve(__dirname, '../emscripten/') + '/';
@@ -43,38 +43,6 @@ MAIN_SOURCES = MAIN_SOURCES.map(function(src) {
 }).join(' ');
 
 let srcTest = path.resolve(__dirname, ARTOOLKIT5_ROOT + '/lib/SRC/');
-let newSrc = formatSlash(srcTest, 1);
-
-function formatSlash(inputSrc, type){
-	let outSrc;
-	if(type == 1){
-		for(let i = 0; i < inputSrc.length; i++){
-			if(inputSrc[i] == String.fromCharCode(92)){
-				outSrc += '/';
-			}else{
-				if(outSrc == null){
-					outSrc = inputSrc[i];
-				}else{
-					outSrc += inputSrc[i];
-				}
-			}
-		}
-	}else if(type == 2){
-		for(let i = 0; i < inputSrc.length; i++){
-			if(inputSrc[i] == String.fromCharCode(47)){
-				outSrc += String.fromCharCode(92);
-			}else{
-				if(outSrc == null){
-					outSrc = inputSrc[i];
-				}else{
-					outSrc += inputSrc[i];
-				}
-			}
-		}
-	}
-	return outSrc;
-}
-
 
 let arSources = glob.sync(srcTest + 'AR/' +'/**/*.c', {});
 let arIcpSources = glob.sync(srcTest + 'ARICP' +'/**/*.c', {});
@@ -139,11 +107,15 @@ var DEFINES = ' ';
 if (HAVE_NFT) DEFINES += ' -D HAVE_NFT ';
 
 var FLAGS = '' + OPTIMIZE_FLAGS;
+// var FLAGS = '';
 FLAGS += ' -Wno-warn-absolute-paths ';
 FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
+FLAGS += ' -s ALLOW_MEMORY_GROWTH=1 ';
 FLAGS += ' -s USE_ZLIB=1';
-//FLAGS += ' -s ERROR_ON_UNDEFINED_SYMBOLS=0';
+FLAGS += ' -s ERROR_ON_UNDEFINED_SYMBOLS=0';
+FLAGS += ' -s ASSERTIONS=1';
 FLAGS += ' --memory-init-file 0 '; // for memless file
+FLAGS += ' -s FORCE_FILESYSTEM=1'
 // FLAGS += ' -msse';
 // FLAGS += ' -msse2';
 // FLAGS += ' -msse3';
