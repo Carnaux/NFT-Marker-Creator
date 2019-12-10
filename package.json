@@ -1,42 +1,15 @@
 {
-  "name": "NFt-Marker-Creator",
-  "version": "0.0.0",
-  "main": "js/index",
-  "typings": "js/index",
-  "description": "NFt Marker Creator based on ARToolKit, ported thanks to Emscripten",
-  "keywords": [
-    "ARToolKit",
-    "AR",
-    "Augmented Reality",
-    "NFT"
-  ],
-  "author": "Carnaux (https://github.com/Carnaux)",
-  "repository": "https://github.com/Carnaux/NFT-Marker-Creator.git",
-  "homepage": "https://github.com/Carnaux/NFT-Marker-Creator",
-  "contributors": [
-    "@kalwalt https://github.com/kalwalt"
-  ],
-  "bugs": {
-    "url": "https://github.com/Carnaux/NFT-Marker-Creator/issues"
-  },
-  "dependencies": {
-    "glob": "^7.1.4",
-    "json2csv": "^4.1.5"
-  },
-  "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-cli": "^1.2.0",
-    "grunt-jsdoc": "^1.1.0",
-    "http-server": "^0.10.0",
-    "ink-docstrap": "^1.1.4",
-    "jsdoc": "^3.4.0",
-    "opener": "^1.4.3",
-    "qunit": "^2.4.1",
-    "watch": "^0.18.0"
-  },
+  "name": "nodegenerator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
   "scripts": {
-    "build": "node tools/makem.js; echo Built at `date`",
-    "watch": "./node_modules/.bin/watch 'npm run build' ./js/"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "license": "LGPL-3.0"
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "glob": "^7.1.6",
+    "inkjet": "^2.1.2"
+  }
 }
