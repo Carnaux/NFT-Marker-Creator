@@ -39,17 +39,13 @@ inkjet.decode(buf, function(err, decoded) {
             newArr.push(decoded.data[j+2])
             newArr.push(decoded.data[j+1])
             newArr.push(decoded.data[j])
-            newArr.push(decoded.data[j+3])
+            
+            
         }
 
-        // for(let j = 0; j < 4; j++){ 
-        //     console.log("newArr: "+j + "-> " +  (newArr[j]));
-        // }
-        // for(let j = 0; j < 4; j++){ 
-        //     console.log("original: "+j + "-> " +  (decoded.data[j]));
-        // }
-        
-        imageData.array = newArr;
+        let uint = new Uint8Array(newArr);
+   
+        imageData.array = uint;
     }
 });
 
@@ -89,7 +85,7 @@ inkjet.exif(buf, function(err, metadata) {
             imageData.sizeY = metadata.ImageLength.value;
         }
 
-        if(metadata.SamplesPerPixel == null){
+        if(metadata.SamplesPerPixel == null || metadata.ImageWidth == undefined){
            
             var answer = readlineSync.question('The image does not contain the number of channels(nc), do you want to inform it?[y/n]\n');
             
