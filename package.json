@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "glob": "^7.1.6",
-    "inkjet": "^2.1.2"
+    "inkjet": "^2.1.2",
+    "readline-sync": "^1.4.10"
   }
 }
