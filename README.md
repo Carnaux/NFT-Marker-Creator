@@ -14,9 +14,7 @@ To build it is needed to setup the emscripten enviroment.
 
 3. Download and copy https://github.com/artoolkit/artoolkit5 to a folder named "artoolkit5" in the "emscripten" folder.
 
-4. Edit the .split(/\s+/).join(' PATH TO LIBJPEG') in the file makem.js.
-
-5. In the emcc env, run "node tools/makem.js".
+4. In the emcc env, run "node tools/makem.js".
 
 
 ## Structure
