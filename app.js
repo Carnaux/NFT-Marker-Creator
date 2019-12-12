@@ -29,6 +29,7 @@ let imageData = {
 }
 
 inkjet.decode(buf, function(err, decoded) {
+    
     if(err){
         console.log("\n" + err + "\n");
         process.exit(1);
@@ -44,7 +45,7 @@ inkjet.decode(buf, function(err, decoded) {
         }
 
         let uint = new Uint8Array(newArr);
-   
+    
         imageData.array = uint;
     }
 });
@@ -54,56 +55,84 @@ inkjet.exif(buf, function(err, metadata) {
         console.log("\n" + err + "\n");
         process.exit(1);
     }else{
-        // console.log(metadata)
-        let dpi = Math.min(parseInt(metadata.XResolution.value), parseInt(metadata.YResolution.value));
-
-        if(dpi == null || dpi == undefined || dpi == NaN){
-            console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
-            dpi = 72;
-        }
-        
-        if(metadata.ImageWidth == null || metadata.ImageWidth == undefined){
-            if(metadata. PixelXDimension == null || metadata. PixelXDimension == undefined){
-                var answer = readlineSync.question('The image does not contain any width or height info, do you want to inform them?[y/n]\n');
-                
-                if(answer == "y"){
-                    var answer2 = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
-
-                    let vals = getValues(answer2, "wh");
-                    imageData.sizeX = vals.w;
-                    imageData.sizeY = vals.h;
-                }else{
-                    console.log("It's not possible to proceed without width or height info!")
-                    process.exit(1);
-                }
-            }else{
-                imageData.sizeX = metadata. PixelXDimension.value;
-                imageData.sizeY = metadata. PixelYDimension.value;
-            }
-        }else{
-            imageData.sizeX = metadata.ImageWidth.value;
-            imageData.sizeY = metadata.ImageLength.value;
-        }
-
-        if(metadata.SamplesPerPixel == null || metadata.ImageWidth == undefined){
-           
-            var answer = readlineSync.question('The image does not contain the number of channels(nc), do you want to inform it?[y/n]\n');
+        if(metadata == null || metadata == undefined || metadata.length == undefined){
+            var answer = readlineSync.question('The EXIF info of this image is empty or it does not exist. Do you want to inform its properties manually?[y/n]\n');
             
             if(answer == "y"){
-                var answer2 = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
+                var answerWH = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
 
-                let vals = getValues(answer2, "nc");
-                imageData.nc = vals;
+                let valWH = getValues(answerWH, "wh");
+                imageData.sizeX = valWH.w;
+                imageData.sizeY = valWH.h;
+
+                var answerNC = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
+
+                let valNC = getValues(answerNC, "nc");
+                imageData.nc = valNC;
+
+                var answerDPI = readlineSync.question('Inform the DPI: e.g DPI=220 [Default = 72](Press enter to use default)\n');
+
+                if(answerDPI == ""){
+                    imageData.dpi = 72;
+                }else{
+                    let val = getValues(answerDPI, "dpi");
+                    imageData.dpi = val;
+                }
             }else{
-                console.log("It's not possible to proceed without the number of channels!")
+                console.log("Exiting process!")
                 process.exit(1);
             }
-           
         }else{
-            imageData.nc = metadata.SamplesPerPixel.value;
-        }
+            let dpi = Math.min(parseInt(metadata.XResolution.value), parseInt(metadata.YResolution.value));
 
-        imageData.dpi = dpi;
+            if(dpi == null || dpi == undefined || dpi == NaN){
+                console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
+                dpi = 72;
+            }
+            
+            if(metadata.ImageWidth == null || metadata.ImageWidth == undefined){
+                if(metadata. PixelXDimension == null || metadata. PixelXDimension == undefined){
+                    var answer = readlineSync.question('The image does not contain any width or height info, do you want to inform them?[y/n]\n');
+                    
+                    if(answer == "y"){
+                        var answer2 = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
+
+                        let vals = getValues(answer2, "wh");
+                        imageData.sizeX = vals.w;
+                        imageData.sizeY = vals.h;
+                    }else{
+                        console.log("It's not possible to proceed without width or height info!")
+                        process.exit(1);
+                    }
+                }else{
+                    imageData.sizeX = metadata.PixelXDimension.value;
+                    imageData.sizeY = metadata.PixelYDimension.value;
+                }
+            }else{
+                imageData.sizeX = metadata.ImageWidth.value;
+                imageData.sizeY = metadata.ImageLength.value;
+            }
+
+            if(metadata.SamplesPerPixel == null || metadata.ImageWidth == undefined){
+            
+                var answer = readlineSync.question('The image does not contain the number of channels(nc), do you want to inform it?[y/n]\n');
+                
+                if(answer == "y"){
+                    var answer2 = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
+
+                    let vals = getValues(answer2, "nc");
+                    imageData.nc = vals;
+                }else{
+                    console.log("It's not possible to proceed without the number of channels!")
+                    process.exit(1);
+                }
+            
+            }else{
+                imageData.nc = metadata.SamplesPerPixel.value;
+            }
+
+            imageData.dpi = dpi;
+        }
     }
 });
 
@@ -159,7 +188,12 @@ function getValues(str, type){
         let nc = "NC=";
         var doesContainNC = str.indexOf(nc);
         values = parseInt(str.slice(doesContainNC+3));
+    }else if(type == "dpi"){
+        let dpi = "DPI=";
+        var doesContainDPI = str.indexOf(dpi);
+        values = parseInt(str.slice(doesContainDPI+4));
     }
+    
     
     
     return values;
