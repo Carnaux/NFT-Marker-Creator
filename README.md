@@ -21,7 +21,7 @@ and it is part of the efforts to bring NFT tracking to AR.js
 
 You can use additional flags with the run command. 
    
-    e.g node app.js -level=4 -min_thresh=8
+e.g node app.js -level=4 -min_thresh=8
 
     
     -level=n
