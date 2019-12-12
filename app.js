@@ -131,13 +131,17 @@ let filenameIset = "asa.iset";
 let filenameFset = "asa.fset";
 let filenameFset3 = "asa.fset3";
 
+let ext = ".iset";
+let ext2 = ".fset";
+let ext3 = ".fset3";
+
 let content = Module.FS.readFile(filenameIset);
 let contentFset = Module.FS.readFile(filenameFset);
 let contentFset3 = Module.FS.readFile( filenameFset3);
 
-fs.writeFileSync( path.join(__dirname, '/output/') + filenameIset, content);
-fs.writeFileSync( path.join(__dirname, '/output/') + filenameFset, contentFset);
-fs.writeFileSync( path.join(__dirname, '/output/') + filenameFset3, contentFset3);
+fs.writeFileSync( path.join(__dirname, '/output/') + fileName + ext, content);
+fs.writeFileSync( path.join(__dirname, '/output/') + fileName + ext2, contentFset);
+fs.writeFileSync( path.join(__dirname, '/output/') + fileName + ext3, contentFset3);
 
 
 function getValues(str, type){
