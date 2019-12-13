@@ -105,7 +105,6 @@ static float                dpiMin = -1.0f;
 static float                dpiMax = -1.0f;
 static float               *dpi_list;
 static int                  dpi_num = 0;
-static int                  temp_dpi_num = 0;
 
 static float                sd_thresh  = -1.0f;
 static float                min_thresh = -1.0f;
@@ -151,8 +150,7 @@ int EMSCRIPTEN_KEEPALIVE createImageSet(ARUint8 *imageIn, float dpiIn, int xsize
     nc = ncIn;
     image = imageIn;
 
-    ARLOGi("Name = %c\n", name);
-    ARLOGi("first = %u\n", imageIn[0]);
+
 
     for( i = 1; i < cmdSize; i++ ) {
         if( strncmp(cmdArr[i], "-dpi=", 5) == 0 ) {
@@ -221,7 +219,7 @@ char *filename = "asa";
 // strcpy(pathToWrite, pathToFiles);
 // strcat(pathToWrite, filename);
 // printf("%s", pathToWrite);
-ARLOGi("Filename: %s\n", filename);
+// ARLOGi("Filename: %s\n", filename);
 
 //     // Do some checks on the input.
 //     if (filename[0] == '\0') {
@@ -377,7 +375,7 @@ ARLOGi("Filename: %s\n", filename);
     // }
 
     setDPI();
-
+    
     ARLOGi("Generating ImageSet...\n");
     ARLOGi("   (Source image xsize=%d, ysize=%d, channels=%d, dpi=%.1f).\n", xsize, ysize, nc, dpi);
     imageSet = ar2GenImageSet( image, xsize, ysize, nc, dpi, dpi_list, dpi_num);
@@ -581,10 +579,9 @@ static int setDPI( void )
                 break;
             }
             dpi_num++;
-            temp_dpi_num++;
+            
         }
         dpi_num = i + 1;
-        temp_dpi_num = i + 1;
     }
     
     arMalloc(dpi_list, float, dpi_num);
