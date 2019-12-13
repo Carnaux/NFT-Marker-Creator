@@ -1,8 +1,6 @@
-# NFT MARKER CREATOR 
+# Builder 
 
-This editor creates NFT markers for ARTOOKIT 5.x
-
-and it is part of the efforts to bring NFT tracking to AR.js
+This repository creates the NftMakerCreator.js file used in the marker creator(master branch). Use it only if you want to make changes to the NftMakerCreator.js.
 
 ## How to Build
 
@@ -23,7 +21,7 @@ To build it is needed to setup the emscripten enviroment.
 
     - build
      
-        - Nft-Marker-Creator.js
+        - Nft-Marker-Creator.min.js
 
     - emscripten
     
@@ -43,6 +41,5 @@ To build it is needed to setup the emscripten enviroment.
      
      - package.json
      
-     - html/css/js files for testing the Editor
      
  #### Build system created by Kalwalt - https://github.com/kalwalt
