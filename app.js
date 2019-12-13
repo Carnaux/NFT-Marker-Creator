@@ -12,13 +12,13 @@ let imagePath = glob.sync(srcTest +'/**/*.{jpg,JPG,jpeg,JPEG}', {});
 let fileNameWithExt = path.basename(imagePath[0]);
 let fileName = path.parse(fileNameWithExt).name
 
-
 if(imagePath.length > 1){
     console.log("\nERROR: Multiple images in INPUT directory!\n")
     process.exit(1);
 }
 
 let buf = fs.readFileSync(imagePath[0]);
+
 
 let imageData = {
     sizeX: 0,
@@ -35,13 +35,19 @@ inkjet.decode(buf, function(err, decoded) {
         process.exit(1);
     }else{
         let newArr = [];
+
+        let verifyColorSpace = detectColorSpace(decoded.data);
         
-        for(let j = 0; j < decoded.data.length; j+=4){
-            newArr.push(decoded.data[j+2])
-            newArr.push(decoded.data[j+1])
-            newArr.push(decoded.data[j])
-            
-            
+        if(verifyColorSpace == 1){
+            for(let j = 0; j < decoded.data.length; j+=4){
+                newArr.push(decoded.data[j]);
+            }
+        }else if(verifyColorSpace == 3){
+            for(let j = 0; j < decoded.data.length; j+=4){
+                newArr.push(decoded.data[j]);
+                newArr.push(decoded.data[j+1]);
+                newArr.push(decoded.data[j+2]);
+            }
         }
 
         let uint = new Uint8Array(newArr);
@@ -65,10 +71,10 @@ inkjet.exif(buf, function(err, metadata) {
                 imageData.sizeX = valWH.w;
                 imageData.sizeY = valWH.h;
 
-                var answerNC = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
+                // var answerNC = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
 
-                let valNC = getValues(answerNC, "nc");
-                imageData.nc = valNC;
+                // let valNC = getValues(answerNC, "nc");
+                // imageData.nc = valNC;
 
                 var answerDPI = readlineSync.question('Inform the DPI: e.g DPI=220 [Default = 72](Press enter to use default)\n');
 
@@ -115,17 +121,17 @@ inkjet.exif(buf, function(err, metadata) {
 
             if(metadata.SamplesPerPixel == null || metadata.ImageWidth == undefined){
             
-                var answer = readlineSync.question('The image does not contain the number of channels(nc), do you want to inform it?[y/n]\n');
+                // var answer = readlineSync.question('The image does not contain the number of channels(nc), do you want to inform it?[y/n]\n');
                 
-                if(answer == "y"){
-                    var answer2 = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
+                // if(answer == "y"){
+                //     var answer2 = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
 
-                    let vals = getValues(answer2, "nc");
-                    imageData.nc = vals;
-                }else{
-                    console.log("It's not possible to proceed without the number of channels!")
-                    process.exit(1);
-                }
+                //     let vals = getValues(answer2, "nc");
+                //     imageData.nc = vals;
+                // }else{
+                //     console.log("It's not possible to proceed without the number of channels!")
+                //     process.exit(1);
+                // }
             
             }else{
                 imageData.nc = metadata.SamplesPerPixel.value;
@@ -194,7 +200,27 @@ function getValues(str, type){
         values = parseInt(str.slice(doesContainDPI+4));
     }
     
-    
-    
     return values;
+}
+
+function detectColorSpace(arr){
+    let target = parseInt(arr.length/4);
+    
+    let counter = 0;
+    
+    for(let j = 0; j < arr.length; j+=4){
+        let r = arr[j];
+        let g = arr[j+1];
+        let b = arr[j+2];
+        
+        if(r == g && r == b){
+            counter++;
+        }
+    }
+    
+    if(target == counter){
+        return 1;
+    }else{
+        return 3;
+    }
 }
