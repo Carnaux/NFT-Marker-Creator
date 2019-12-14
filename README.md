@@ -13,7 +13,7 @@ and it is part of the efforts to bring NFT tracking to AR.js
     ` npm install `
 
 
-3. Put the image you want inside the "input" folder. Make sure that it is the only jpg image there.
+3. Put the image you want inside the "input" folder. Make sure that it is the only JPG/PNG image there.
 
 4. Run it
 
@@ -23,7 +23,6 @@ You can use additional flags with the run command.
    
 e.g node app.js -level=4 -min_thresh=8
 
-    
     -level=n
          (n is an integer in range 0 (few) to 4 (many). Default 2.'
     -sd_thresh=<sd_thresh>
