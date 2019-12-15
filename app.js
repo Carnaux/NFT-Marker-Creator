@@ -19,7 +19,7 @@ if(imagePath.length > 1){
     process.exit(1);
 }
 
-let buff = fs.readFileSync(imagePath[0]);
+let buf = fs.readFileSync(imagePath[0]);
 
 
 let imageData = {
@@ -31,9 +31,9 @@ let imageData = {
 }
 
 if(extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg"){
-    useJPG(buff)
+    useJPG(buf)
 }else if(extName.toLowerCase() == ".png"){
-    usePNG(buff);
+    usePNG(buf);
 }
 
 
@@ -49,7 +49,7 @@ for (let j = 2; j < process.argv.length; j++){
     }else{
         params.push(process.argv[j]);
     }
-    
+
 }
 
 let heapSpace = Module._malloc(imageData.array.length * imageData.array.BYTES_PER_ELEMENT);
@@ -78,15 +78,15 @@ fs.writeFileSync( path.join(__dirname, '/output/') + fileName + ext3, contentFse
 function useJPG(buf){
 
     inkjet.decode(buf, function(err, decoded) {
-    
+
         if(err){
             console.log("\n" + err + "\n");
             process.exit(1);
         }else{
             let newArr = [];
-    
+
             let verifyColorSpace = detectColorSpace(decoded.data);
-            
+
             if(verifyColorSpace == 1){
                 for(let j = 0; j < decoded.data.length; j+=4){
                     newArr.push(decoded.data[j]);
@@ -98,14 +98,13 @@ function useJPG(buf){
                     newArr.push(decoded.data[j+2]);
                 }
             }
-            
+
             let uint = new Uint8Array(newArr);
-        
-            imageData.array = uint;
             imageData.nc = verifyColorSpace;
+            imageData.array = uint;
         }
     });
-    
+
     inkjet.exif(buf, function(err, metadata) {
         if(err){
             console.log("\n" + err + "\n");
@@ -113,21 +112,21 @@ function useJPG(buf){
         }else{
             if(metadata == null || metadata == undefined || metadata.length == undefined){
                 var answer = readlineSync.question('The EXIF info of this image is empty or it does not exist. Do you want to inform its properties manually?[y/n]\n');
-                
+
                 if(answer == "y"){
                     var answerWH = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
-    
+
                     let valWH = getValues(answerWH, "wh");
                     imageData.sizeX = valWH.w;
                     imageData.sizeY = valWH.h;
-    
+
                     // var answerNC = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
-    
+
                     // let valNC = getValues(answerNC, "nc");
                     // imageData.nc = valNC;
-    
+
                     var answerDPI = readlineSync.question('Inform the DPI: e.g DPI=220 [Default = 72](Press enter to use default)\n');
-    
+
                     if(answerDPI == ""){
                         imageData.dpi = 72;
                     }else{
@@ -140,19 +139,19 @@ function useJPG(buf){
                 }
             }else{
                 let dpi = Math.min(parseInt(metadata.XResolution.value), parseInt(metadata.YResolution.value));
-    
+
                 if(dpi == null || dpi == undefined || dpi == NaN){
                     console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
                     dpi = 72;
                 }
-                
+
                 if(metadata.ImageWidth == null || metadata.ImageWidth == undefined){
                     if(metadata. PixelXDimension == null || metadata. PixelXDimension == undefined){
                         var answer = readlineSync.question('The image does not contain any width or height info, do you want to inform them?[y/n]\n');
-                        
+
                         if(answer == "y"){
                             var answer2 = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
-    
+
                             let vals = getValues(answer2, "wh");
                             imageData.sizeX = vals.w;
                             imageData.sizeY = vals.h;
@@ -168,25 +167,25 @@ function useJPG(buf){
                     imageData.sizeX = metadata.ImageWidth.value;
                     imageData.sizeY = metadata.ImageLength.value;
                 }
-    
+
                 if(metadata.SamplesPerPixel == null || metadata.ImageWidth == undefined){
-                
+
                     // var answer = readlineSync.question('The image does not contain the number of channels(nc), do you want to inform it?[y/n]\n');
-                    
+
                     // if(answer == "y"){
                     //     var answer2 = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
-    
+
                     //     let vals = getValues(answer2, "nc");
                     //     imageData.nc = vals;
                     // }else{
                     //     console.log("It's not possible to proceed without the number of channels!")
                     //     process.exit(1);
                     // }
-                
+
                 }else{
                     imageData.nc = metadata.SamplesPerPixel.value;
                 }
-    
+
                 imageData.dpi = dpi;
             }
         }
@@ -203,11 +202,11 @@ function usePNG(buf){
     }else{
         data = arrByte;
     }
-   
+
     let newArr = [];
-    
+
     let verifyColorSpace = detectColorSpace(data);
-    
+
     if(verifyColorSpace == 1){
         for(let j = 0; j < data.length; j+=4){
             newArr.push(data[j]);
@@ -219,7 +218,7 @@ function usePNG(buf){
             newArr.push(data[j+2]);
         }
     }
-    
+
     let uint = new Uint8Array(newArr);
 
     imageData.array = uint;
@@ -236,10 +235,10 @@ function getValues(str, type){
         let Hstr = "H=";
         var doesContainW = str.indexOf(Wstr);
         var doesContainH = str.indexOf(Hstr);
-    
+
         let valW = parseInt(str.slice(doesContainW+2, doesContainH));
         let valH = parseInt(str.slice(doesContainH+2));
-    
+
         values = {
             w: valW,
             h: valH
@@ -253,25 +252,25 @@ function getValues(str, type){
         var doesContainDPI = str.indexOf(dpi);
         values = parseInt(str.slice(doesContainDPI+4));
     }
-    
+
     return values;
 }
 
 function detectColorSpace(arr){
     let target = parseInt(arr.length/4);
-    
+
     let counter = 0;
-    
+
     for(let j = 0; j < arr.length; j+=4){
         let r = arr[j];
         let g = arr[j+1];
         let b = arr[j+2];
-        
+
         if(r == g && r == b){
             counter++;
         }
     }
-    
+
     if(target == counter){
         return 1;
     }else{
@@ -303,6 +302,6 @@ function rgbaToRgb(arr){
 function setFromCmd(str){
     let middle = str.indexOf('=');
     let value = parseInt(str.slice(middle+1).trim());
-    
+
     imageData.dpi = value;
 }
