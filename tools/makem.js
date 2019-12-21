@@ -7,7 +7,6 @@ var
 	exec = require('child_process').exec,
 	path = require('path'),
 	fs = require('fs'),
-	glob = require('glob'),
 	child;
 
 var HAVE_NFT = 1;
