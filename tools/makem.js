@@ -44,13 +44,13 @@ MAIN_SOURCES = MAIN_SOURCES.map(function(src) {
 
 let srcTest = path.resolve(__dirname, ARTOOLKIT5_ROOT + '/lib/SRC/');
 
-let arSources = glob.sync(srcTest + 'AR/' +'/**/*.c', {});
-let arIcpSources = glob.sync(srcTest + 'ARICP' +'/**/*.c', {});
-let arMultiSources = glob.sync(srcTest + 'ARMulti' +'/**/*.c', {});
-let ar_sources = arSources.concat(arIcpSources).concat(arMultiSources);
-ar_sources.push(srcTest+'/Video/video.c');
-ar_sources.push(srcTest+'/ARUtil/log.c');
-ar_sources.push(srcTest+'/ARUtil/file_utils.c');
+var ar_sources = [
+    'Video/video.c',
+    'ARUtil/log.c',
+    'ARUtil/file_utils.c',
+].map(function(src) {
+	return path.resolve(__dirname, ARTOOLKIT5_ROOT + '/lib/SRC/', src);
+});
 
 var ar2_sources = [
 	'handle.c',
@@ -110,7 +110,7 @@ var FLAGS = '' + OPTIMIZE_FLAGS;
 // var FLAGS = '';
 FLAGS += ' -Wno-warn-absolute-paths ';
 FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
-//FLAGS += ' -s ALLOW_MEMORY_GROWTH=1 ';
+FLAGS += ' -s ALLOW_MEMORY_GROWTH=1 ';
 FLAGS += ' -s USE_ZLIB=1';
 FLAGS += ' -s ASSERTIONS=1';
 FLAGS += ' --memory-init-file 0 '; // for memless file
