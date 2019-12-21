@@ -112,15 +112,9 @@ FLAGS += ' -Wno-warn-absolute-paths ';
 FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1 ';
 FLAGS += ' -s USE_ZLIB=1';
-FLAGS += ' -s ERROR_ON_UNDEFINED_SYMBOLS=0';
 FLAGS += ' -s ASSERTIONS=1';
 FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += ' -s FORCE_FILESYSTEM=1'
-// FLAGS += ' -msse';
-// FLAGS += ' -msse2';
-// FLAGS += ' -msse3';
-// FLAGS += ' -mssse3';
-
 
 var EXPORTED_FUNCTIONS = ' -s EXPORTED_FUNCTIONS=["_createImageSet"] -s EXTRA_EXPORTED_RUNTIME_METHODS=["FS"] ';
 
