@@ -23,7 +23,7 @@ if (!EMSCRIPTEN_ROOT) {
 
 var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'emcc') : 'emcc';
 var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'em++') : 'em++';
-var OPTIMIZE_FLAGS = ' -O3 '; // -Oz for smallest size
+var OPTIMIZE_FLAGS = ' -Oz '; // -Oz for smallest size
 var MEM = (256 *1024 * 1024) ; // 64MB
 
 
@@ -44,13 +44,13 @@ MAIN_SOURCES = MAIN_SOURCES.map(function(src) {
 
 let srcTest = path.resolve(__dirname, ARTOOLKIT5_ROOT + '/lib/SRC/');
 
-let arSources = glob.sync(srcTest + 'AR/' +'/**/*.c', {});
-let arIcpSources = glob.sync(srcTest + 'ARICP' +'/**/*.c', {});
-let arMultiSources = glob.sync(srcTest + 'ARMulti' +'/**/*.c', {});
-let ar_sources = arSources.concat(arIcpSources).concat(arMultiSources);
-ar_sources.push(srcTest+'/Video/video.c');
-ar_sources.push(srcTest+'/ARUtil/log.c');
-ar_sources.push(srcTest+'/ARUtil/file_utils.c');
+var ar_sources = [
+    'Video/video.c',
+    'ARUtil/log.c',
+    'ARUtil/file_utils.c',
+].map(function(src) {
+	return path.resolve(__dirname, ARTOOLKIT5_ROOT + '/lib/SRC/', src);
+});
 
 var ar2_sources = [
 	'handle.c',
@@ -112,15 +112,9 @@ FLAGS += ' -Wno-warn-absolute-paths ';
 FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1 ';
 FLAGS += ' -s USE_ZLIB=1';
-FLAGS += ' -s ERROR_ON_UNDEFINED_SYMBOLS=0';
 FLAGS += ' -s ASSERTIONS=1';
 FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += ' -s FORCE_FILESYSTEM=1'
-// FLAGS += ' -msse';
-// FLAGS += ' -msse2';
-// FLAGS += ' -msse3';
-// FLAGS += ' -mssse3';
-
 
 var EXPORTED_FUNCTIONS = ' -s EXPORTED_FUNCTIONS=["_createImageSet"] -s EXTRA_EXPORTED_RUNTIME_METHODS=["FS"] ';
 
