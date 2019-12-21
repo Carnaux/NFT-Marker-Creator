@@ -23,7 +23,7 @@ if (!EMSCRIPTEN_ROOT) {
 
 var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'emcc') : 'emcc';
 var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, 'em++') : 'em++';
-var OPTIMIZE_FLAGS = ' -O3 '; // -Oz for smallest size
+var OPTIMIZE_FLAGS = ' -Oz '; // -Oz for smallest size
 var MEM = (256 *1024 * 1024) ; // 64MB
 
 
