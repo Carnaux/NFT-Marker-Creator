@@ -110,7 +110,7 @@ var FLAGS = '' + OPTIMIZE_FLAGS;
 // var FLAGS = '';
 FLAGS += ' -Wno-warn-absolute-paths ';
 FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
-FLAGS += ' -s ALLOW_MEMORY_GROWTH=1 ';
+//FLAGS += ' -s ALLOW_MEMORY_GROWTH=1 ';
 FLAGS += ' -s USE_ZLIB=1';
 FLAGS += ' -s ASSERTIONS=1';
 FLAGS += ' --memory-init-file 0 '; // for memless file
