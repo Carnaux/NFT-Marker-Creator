@@ -2,7 +2,9 @@
 
 This editor creates NFT markers for ARTOOKIT 5.x
 
-and it is part of the efforts to bring NFT tracking to AR.js
+and it is part of the efforts to bring NFT tracking to AR.js!
+
+There is also a browser version: https://carnaux.github.io/NFT-Marker-Creator-Web/ (The usage is recommended only for small images. width and/or height < 1000px)
 
 ## How to use it
 
