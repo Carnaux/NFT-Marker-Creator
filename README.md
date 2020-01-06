@@ -8,9 +8,13 @@ To build it is needed to setup the emscripten enviroment.
 
 1. Clone the dev branch.
 
-2. Download and copy https://github.com/artoolkit/artoolkit5 to a folder named "artoolkit5" in the "emscripten" folder.
+2. Download and copy https://github.com/artoolkit/artoolkit5 to a folder named "artoolkit5" in the "emscripten" folder or you can save it in another location and configure the environment variable **ARTOOLKIT5_ROOT**.
 
-3. In the emcc env, run "npm run build".
+3. In the emcc env, run:
+
+```
+npm run build
+```
 
 
 ## Structure
