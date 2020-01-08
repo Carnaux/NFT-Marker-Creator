@@ -1,10 +1,8 @@
 # NFT MARKER CREATOR
 
-This editor creates NFT markers for ARTOOKIT 5.x
+This editor creates NFT markers for ARTOOKIT 5.x, and it is part of the efforts to bring NFT tracking to jsartoolkit5 (and eventually projects like AR.js).
 
-and it is part of the efforts to bring NFT tracking to AR.js
-
-Node version (preferred) and Web version are provided.
+A Node version (preferred) and Web version are provided.
 
 ## Node version
 
@@ -63,5 +61,5 @@ Advanced options coming soon.
 3. Click the generate button.
 4. The files will be automatically downloaded when the generation finishes.
 
-
+------
 #### If you want to generate you own NftMarkerCreator.min.js use the dev branch.

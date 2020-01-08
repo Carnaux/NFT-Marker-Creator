@@ -8,13 +8,13 @@ var Module = require('./NftMarkerCreator.min.js');
 
 let srcTest = path.join(__dirname, '/input/');
 
-let imagePath = glob.sync(srcTest +'/**/*.{jpg,JPG,jpeg,JPEG,png,PNG}', {});
+let imagePath = glob.sync(srcTest + '/**/*.{jpg,JPG,jpeg,JPEG,png,PNG}', {});
 
 let fileNameWithExt = path.basename(imagePath[0]);
 let fileName = path.parse(fileNameWithExt).name;
 let extName = path.parse(fileNameWithExt).ext;
 
-if(imagePath.length > 1){
+if (imagePath.length > 1) {
     console.log("\nERROR: Multiple images in INPUT directory!\n")
     process.exit(1);
 }
@@ -30,9 +30,9 @@ let imageData = {
     array: []
 }
 
-if(extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg"){
+if (extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg") {
     useJPG(buff)
-}else if(extName.toLowerCase() == ".png"){
+} else if (extName.toLowerCase() == ".png") {
     usePNG(buff);
 }
 
@@ -42,20 +42,20 @@ var params = [
     fileNameWithExt
 ];
 
-for (let j = 2; j < process.argv.length; j++){
+for (let j = 2; j < process.argv.length; j++) {
     let cmd = process.argv[j].indexOf('-customDPI=');
-    if( cmd !== -1){
+    if (cmd !== -1) {
         setFromCmd(process.argv[j]);
-    }else{
+    } else {
         params.push(process.argv[j]);
     }
 
 }
 
 let heapSpace = Module._malloc(imageData.array.length * imageData.array.BYTES_PER_ELEMENT);
-Module.HEAPU8.set( imageData.array, heapSpace);
+Module.HEAPU8.set(imageData.array, heapSpace);
 
-Module._createImageSet(heapSpace ,imageData.dpi, imageData.sizeX, imageData.sizeY, imageData.nc, fileName, params.length, params)
+Module._createImageSet(heapSpace, imageData.dpi, imageData.sizeX, imageData.sizeY, imageData.nc, fileName, params.length, params)
 
 Module._free(heapSpace);
 
@@ -69,33 +69,33 @@ let ext3 = ".fset3";
 
 let content = Module.FS.readFile(filenameIset);
 let contentFset = Module.FS.readFile(filenameFset);
-let contentFset3 = Module.FS.readFile( filenameFset3);
+let contentFset3 = Module.FS.readFile(filenameFset3);
 
-fs.writeFileSync( path.join(__dirname, '/output/') + fileName + ext, content);
-fs.writeFileSync( path.join(__dirname, '/output/') + fileName + ext2, contentFset);
-fs.writeFileSync( path.join(__dirname, '/output/') + fileName + ext3, contentFset3);
+fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext, content);
+fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext2, contentFset);
+fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext3, contentFset3);
 
-function useJPG(buf){
+function useJPG(buf) {
 
-    inkjet.decode(buf, function(err, decoded) {
+    inkjet.decode(buf, function (err, decoded) {
 
-        if(err){
+        if (err) {
             console.log("\n" + err + "\n");
             process.exit(1);
-        }else{
+        } else {
             let newArr = [];
 
             let verifyColorSpace = detectColorSpace(decoded.data);
 
-            if(verifyColorSpace == 1){
-                for(let j = 0; j < decoded.data.length; j+=4){
+            if (verifyColorSpace == 1) {
+                for (let j = 0; j < decoded.data.length; j += 4) {
                     newArr.push(decoded.data[j]);
                 }
-            }else if(verifyColorSpace == 3){
-                for(let j = 0; j < decoded.data.length; j+=4){
+            } else if (verifyColorSpace == 3) {
+                for (let j = 0; j < decoded.data.length; j += 4) {
                     newArr.push(decoded.data[j]);
-                    newArr.push(decoded.data[j+1]);
-                    newArr.push(decoded.data[j+2]);
+                    newArr.push(decoded.data[j + 1]);
+                    newArr.push(decoded.data[j + 2]);
                 }
             }
 
@@ -105,15 +105,15 @@ function useJPG(buf){
         }
     });
 
-    inkjet.exif(buf, function(err, metadata) {
-        if(err){
+    inkjet.exif(buf, function (err, metadata) {
+        if (err) {
             console.log("\n" + err + "\n");
             process.exit(1);
-        }else{
-            if(metadata == null || metadata == undefined || metadata.length == undefined){
+        } else {
+            if (metadata == null || metadata == undefined || metadata.length == undefined) {
                 var answer = readlineSync.question('The EXIF info of this image is empty or it does not exist. Do you want to inform its properties manually?[y/n]\n');
 
-                if(answer == "y"){
+                if (answer == "y") {
                     var answerWH = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
 
                     let valWH = getValues(answerWH, "wh");
@@ -127,48 +127,48 @@ function useJPG(buf){
 
                     var answerDPI = readlineSync.question('Inform the DPI: e.g DPI=220 [Default = 72](Press enter to use default)\n');
 
-                    if(answerDPI == ""){
+                    if (answerDPI == "") {
                         imageData.dpi = 72;
-                    }else{
+                    } else {
                         let val = getValues(answerDPI, "dpi");
                         imageData.dpi = val;
                     }
-                }else{
+                } else {
                     console.log("Exiting process!")
                     process.exit(1);
                 }
-            }else{
+            } else {
                 let dpi = Math.min(parseInt(metadata.XResolution.value), parseInt(metadata.YResolution.value));
 
-                if(dpi == null || dpi == undefined || dpi == NaN){
+                if (dpi == null || dpi == undefined || dpi == NaN) {
                     console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
                     dpi = 72;
                 }
 
-                if(metadata.ImageWidth == null || metadata.ImageWidth == undefined){
-                    if(metadata. PixelXDimension == null || metadata. PixelXDimension == undefined){
+                if (metadata.ImageWidth == null || metadata.ImageWidth == undefined) {
+                    if (metadata.PixelXDimension == null || metadata.PixelXDimension == undefined) {
                         var answer = readlineSync.question('The image does not contain any width or height info, do you want to inform them?[y/n]\n');
 
-                        if(answer == "y"){
+                        if (answer == "y") {
                             var answer2 = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
 
                             let vals = getValues(answer2, "wh");
                             imageData.sizeX = vals.w;
                             imageData.sizeY = vals.h;
-                        }else{
+                        } else {
                             console.log("It's not possible to proceed without width or height info!")
                             process.exit(1);
                         }
-                    }else{
+                    } else {
                         imageData.sizeX = metadata.PixelXDimension.value;
                         imageData.sizeY = metadata.PixelYDimension.value;
                     }
-                }else{
+                } else {
                     imageData.sizeX = metadata.ImageWidth.value;
                     imageData.sizeY = metadata.ImageLength.value;
                 }
 
-                if(metadata.SamplesPerPixel == null || metadata.ImageWidth == undefined){
+                if (metadata.SamplesPerPixel == null || metadata.ImageWidth == undefined) {
 
                     // var answer = readlineSync.question('The image does not contain the number of channels(nc), do you want to inform it?[y/n]\n');
 
@@ -182,7 +182,7 @@ function useJPG(buf){
                     //     process.exit(1);
                     // }
 
-                }else{
+                } else {
                     imageData.nc = metadata.SamplesPerPixel.value;
                 }
 
@@ -192,14 +192,14 @@ function useJPG(buf){
     });
 }
 
-function usePNG(buf){
+function usePNG(buf) {
     let data;
     var png = PNG.sync.read(buf);
 
     var arrByte = new Uint8Array(png.data);
-    if(png.alpha){
+    if (png.alpha) {
         data = rgbaToRgb(arrByte);
-    }else{
+    } else {
         data = arrByte;
     }
 
@@ -207,15 +207,15 @@ function usePNG(buf){
 
     let verifyColorSpace = detectColorSpace(data);
 
-    if(verifyColorSpace == 1){
-        for(let j = 0; j < data.length; j+=4){
+    if (verifyColorSpace == 1) {
+        for (let j = 0; j < data.length; j += 4) {
             newArr.push(data[j]);
         }
-    }else if(verifyColorSpace == 3){
-        for(let j = 0; j < data.length; j+=4){
+    } else if (verifyColorSpace == 3) {
+        for (let j = 0; j < data.length; j += 4) {
             newArr.push(data[j]);
-            newArr.push(data[j+1]);
-            newArr.push(data[j+2]);
+            newArr.push(data[j + 1]);
+            newArr.push(data[j + 2]);
         }
     }
 
@@ -228,57 +228,57 @@ function usePNG(buf){
     imageData.dpi = 72;
 }
 
-function getValues(str, type){
+function getValues(str, type) {
     let values;
-    if(type == "wh"){
+    if (type == "wh") {
         let Wstr = "W=";
         let Hstr = "H=";
         var doesContainW = str.indexOf(Wstr);
         var doesContainH = str.indexOf(Hstr);
 
-        let valW = parseInt(str.slice(doesContainW+2, doesContainH));
-        let valH = parseInt(str.slice(doesContainH+2));
+        let valW = parseInt(str.slice(doesContainW + 2, doesContainH));
+        let valH = parseInt(str.slice(doesContainH + 2));
 
         values = {
             w: valW,
             h: valH
         }
-    }else if(type == "nc"){
+    } else if (type == "nc") {
         let nc = "NC=";
         var doesContainNC = str.indexOf(nc);
-        values = parseInt(str.slice(doesContainNC+3));
-    }else if(type == "dpi"){
+        values = parseInt(str.slice(doesContainNC + 3));
+    } else if (type == "dpi") {
         let dpi = "DPI=";
         var doesContainDPI = str.indexOf(dpi);
-        values = parseInt(str.slice(doesContainDPI+4));
+        values = parseInt(str.slice(doesContainDPI + 4));
     }
 
     return values;
 }
 
-function detectColorSpace(arr){
-    let target = parseInt(arr.length/4);
+function detectColorSpace(arr) {
+    let target = parseInt(arr.length / 4);
 
     let counter = 0;
 
-    for(let j = 0; j < arr.length; j+=4){
+    for (let j = 0; j < arr.length; j += 4) {
         let r = arr[j];
-        let g = arr[j+1];
-        let b = arr[j+2];
+        let g = arr[j + 1];
+        let b = arr[j + 2];
 
-        if(r == g && r == b){
+        if (r == g && r == b) {
             counter++;
         }
     }
 
-    if(target == counter){
+    if (target == counter) {
         return 1;
-    }else{
+    } else {
         return 3;
     }
 }
 
-function rgbaToRgb(arr){
+function rgbaToRgb(arr) {
     let newArr = [];
     let BGColor = {
         R: 255,
@@ -286,11 +286,11 @@ function rgbaToRgb(arr){
         B: 255
     }
 
-    for(let i = 0; i < arr.length; i+=4){
+    for (let i = 0; i < arr.length; i += 4) {
 
-        let r = parseInt(255 * (((1 - arr[i+3]) * BGColor.R) + (arr[i+3] * arr[i])));
-        let g = parseInt(255 * (((1 - arr[i+3]) * BGColor.G) + (arr[i+3] * arr[i+1])));
-        let b = parseInt(255 * (((1 - arr[i+3]) * BGColor.B) + (arr[i+3] * arr[i+2])));
+        let r = parseInt(255 * (((1 - arr[i + 3]) * BGColor.R) + (arr[i + 3] * arr[i])));
+        let g = parseInt(255 * (((1 - arr[i + 3]) * BGColor.G) + (arr[i + 3] * arr[i + 1])));
+        let b = parseInt(255 * (((1 - arr[i + 3]) * BGColor.B) + (arr[i + 3] * arr[i + 2])));
 
         newArr.push(r);
         newArr.push(g);
@@ -299,9 +299,9 @@ function rgbaToRgb(arr){
     return newArr;
 }
 
-function setFromCmd(str){
+function setFromCmd(str) {
     let middle = str.indexOf('=');
-    let value = parseInt(str.slice(middle+1).trim());
+    let value = parseInt(str.slice(middle + 1).trim());
 
     imageData.dpi = value;
 }

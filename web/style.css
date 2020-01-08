@@ -1,52 +1,55 @@
-body{
+body {
     background-color: #eee;
+    font-family: sans-serif;
+    height: 100%;
+    width: 100%;
 }
-#title{
-    position: absolute;
-    font-family: 'Lilita One', cursive;
-    top: 0;
-    left: 450px;
-    font-size: 70px;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    align-items: center;
 }
-.bt{
-    border-radius: 20px;
-    font-family: 'Lilita One', cursive;
+
+#title {
+    font-size: 5em;
 }
-#generateBt{
-    position: absolute;
-    font-size: 50px;
-    border-color: rgb(200, 0, 0);
-    right: 150px;
-    top: 300px;
+
+.bt {
+    border-radius: 5px;
+    width: 10em;
+    margin-top: 0.5em;
+    cursor: pointer;
 }
-#uploadBt{
-    font-size: 40px;
-    position: absolute;
-    left: 150px;
-    top: 300px;
+
+#generateBt {
+    font-size: 2em;
 }
-#hideCanvas{
+
+#uploadBt {
+    font-size: 2em;
+}
+
+#hideCanvas {
     display: none;
 }
-#imageCanvas{
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    border-color: rgba(0, 0, 0, 0.267);
 
-    width: 400px;
-    height: 400px;
+#imageCanvas {
+    margin-top: 4em;
+    width: 20em;
+    height: 20em;
 }
-#warning{
+
+#warning {
     position: absolute;
     bottom: 80px;
     font-size: 18px;
 }
+
 /* MODAL */
-#modal{
+#modal {
     position: absolute;
     top: 0;
     left: 0;
@@ -56,7 +59,8 @@ body{
     display: none;
     z-index: 1000000;
 }
-#modalBody{
+
+#modalBody {
     background-color: white;
     border-radius: 10px;
     border-style: solid;
@@ -71,47 +75,68 @@ body{
     width: 400px;
     height: 280px;
 }
-#modalTitle{
+
+#modalTitle {
     position: absolute;
     top: 40px;
     left: 60px;
     font-size: 20px;
-    font-family: 'Lilita One', cursive;
     margin: auto;
 }
-#confirmBt{
-    border-color: rgb(0, 200, 0);
+
+#confirmBt {
     right: 100px;
 }
-#cancelBt{
-    border-color: rgb(200, 0, 0);
+
+#cancelBt {
     left: 100px;
 }
-.modBt{
+
+.modBt {
     position: absolute;
     bottom: 30px;
     font-size: 20px;
 }
-#modalInput{
+
+#modalInput {
     position: absolute;
     bottom: 100px;
     left: 120px;
     border-color: rgb(100, 100, 100);
 }
-#modalTxt{
+
+#modalTxt {
     position: absolute;
     bottom: 120px;
     font-weight: bold;
     text-align: center;
 }
 
-@media only screen and (max-width: 1000px) {
-    #title{
-        font-size: 60px;
-        left: 250px;
-    }
-    #imageCanvas{
-        width: 300px;
-        height: 300px;
-    }
-  }
+/* SPINNER */
+.spinner-container {
+    display: none;
+    margin-top: 4em;
+}
+
+.spinner {
+	width: 4em;
+	height: 4em;
+	clear: both;
+    margin: auto;
+    border: 4px #1A1A2C solid;
+	border-top: 4px #eee solid;
+	border-radius: 50%;
+	-webkit-animation: spin .6s infinite linear;
+	animation: spin .6s infinite linear;
+}
+
+
+@-webkit-keyframes spin {
+	from { -webkit-transform: rotate(0deg); }
+	to { -webkit-transform: rotate(359deg); }
+}
+
+@keyframes spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(359deg); }
+}
