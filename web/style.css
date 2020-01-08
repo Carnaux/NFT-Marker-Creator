@@ -1,0 +1,117 @@
+body{
+    background-color: #eee;
+}
+#title{
+    position: absolute;
+    font-family: 'Lilita One', cursive;
+    top: 0;
+    left: 450px;
+    font-size: 70px;
+}
+.bt{
+    border-radius: 20px;
+    font-family: 'Lilita One', cursive;
+}
+#generateBt{
+    position: absolute;
+    font-size: 50px;
+    border-color: rgb(200, 0, 0);
+    right: 150px;
+    top: 300px;
+}
+#uploadBt{
+    font-size: 40px;
+    position: absolute;
+    left: 150px;
+    top: 300px;
+}
+#hideCanvas{
+    display: none;
+}
+#imageCanvas{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-color: rgba(0, 0, 0, 0.267);
+
+    width: 400px;
+    height: 400px;
+}
+#warning{
+    position: absolute;
+    bottom: 80px;
+    font-size: 18px;
+}
+/* MODAL */
+#modal{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.267);
+    display: none;
+    z-index: 1000000;
+}
+#modalBody{
+    background-color: white;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: rgb(100, 100, 100);
+
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 400px;
+    height: 280px;
+}
+#modalTitle{
+    position: absolute;
+    top: 40px;
+    left: 60px;
+    font-size: 20px;
+    font-family: 'Lilita One', cursive;
+    margin: auto;
+}
+#confirmBt{
+    border-color: rgb(0, 200, 0);
+    right: 100px;
+}
+#cancelBt{
+    border-color: rgb(200, 0, 0);
+    left: 100px;
+}
+.modBt{
+    position: absolute;
+    bottom: 30px;
+    font-size: 20px;
+}
+#modalInput{
+    position: absolute;
+    bottom: 100px;
+    left: 120px;
+    border-color: rgb(100, 100, 100);
+}
+#modalTxt{
+    position: absolute;
+    bottom: 120px;
+    font-weight: bold;
+    text-align: center;
+}
+
+@media only screen and (max-width: 1000px) {
+    #title{
+        font-size: 60px;
+        left: 250px;
+    }
+    #imageCanvas{
+        width: 300px;
+        height: 300px;
+    }
+  }

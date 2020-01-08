@@ -1,10 +1,14 @@
-# NFT MARKER CREATOR 
+# NFT MARKER CREATOR
 
 This editor creates NFT markers for ARTOOKIT 5.x
 
 and it is part of the efforts to bring NFT tracking to AR.js
 
-## How to use it
+Node version (preferred) and Web version are provided.
+
+## Node version
+
+### How to use it
 
 1. Clone this repository.
 
@@ -17,10 +21,10 @@ and it is part of the efforts to bring NFT tracking to AR.js
 
 4. Run it
 
-    ` node app.js ` 
+    ` node app.js `
 
-You can use additional flags with the run command. 
-   
+You can use additional flags with the run command.
+
 e.g node app.js -level=4 -min_thresh=8
 
     -level=n
@@ -44,6 +48,20 @@ e.g node app.js -level=4 -min_thresh=8
 
 
 5. The generated files will be on the "output" folder.
+
+# Web version
+
+This version is less efficient for images with width and/or height with 1000px or higher.
+
+
+Advanced options coming soon.
+
+## Instructions
+
+1. Upload any JPG/PNG image.
+2. If the Number of Channels is missing, it will as for it.
+3. Click the generate button.
+4. The files will be automatically downloaded when the generation finishes.
 
 
 #### If you want to generate you own NftMarkerCreator.min.js use the dev branch.

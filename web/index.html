@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>NFt Marker Creator</title>
+    <link href="https://fonts.googleapis.com/css?family=Lilita+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <p id="title">NFT Marker Creator</p>
+
+    <input type="file" id="imageLoader" name="imageLoader" style="display: none;"/>
+    <button id="uploadBt" onclick="document.getElementById('imageLoader').click();" class="bt">Upload Image</button>
+    <button id="generateBt" onclick="generate()" class="bt" disabled>Generate</button>
+
+    <canvas id="imageCanvas"></canvas>
+    <canvas id="hideCanvas"></canvas>
+
+    <p id="warning"><span style="color: red">Warning:</span> Images with width and/or height above 1000px might take 20min+ to generate.<br> To more efficient generator use the node app: <a href="https://github.com/Carnaux/NFT-Marker-Creator">https://github.com/Carnaux/NFT-Marker-Creator</a><br>Instructions for this site: <a href="https://github.com/Carnaux/NFT-Marker-Creator-Web">https://github.com/Carnaux/NFT-Marker-Creator-Web</a></p>
+
+
+    <!-- <button onclick="downloadIset()">download</button> -->
+
+    <div id="modal">
+        <div id="modalBody">
+            <p id="modalTitle">No "Number of Channels" found!</p>
+            <p id="modalTxt">Inform the number of channels(nc):<br>(black and white images have NC=1, colored images have NC=3)</p>
+            <input id="modalInput" type="number"  value="3">
+            <button id="cancelBt" class="bt modBt" onclick="closeModal()">Cancel</button>
+            <button id="confirmBt" class="bt modBt" onclick="setValueFromModal()">Confirm</button>
+        </div>
+    </div>
+
+    <!-- <script src="PNGReader.js"></script> -->
+    <script src="exif.js"></script>
+    <script async type="text/javascript" src="../NftMarkerCreator.min.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
