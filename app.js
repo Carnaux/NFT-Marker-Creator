@@ -21,7 +21,6 @@ if (imagePath.length > 1) {
 
 let buffer = fs.readFileSync(imagePath[0]);
 
-
 let imageData = {
     sizeX: 0,
     sizeY: 0,
@@ -137,7 +136,6 @@ function useJPG(buf) {
                 }
             } else {
                 let dpi = Math.min(parseInt(metadata.XResolution.value), parseInt(metadata.YResolution.value));
-
                 if (dpi == null || dpi == undefined || dpi == NaN) {
                     console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
                     dpi = 72;
@@ -146,7 +144,6 @@ function useJPG(buf) {
                 if (metadata.ImageWidth == null || metadata.ImageWidth == undefined) {
                     if (metadata.PixelXDimension == null || metadata.PixelXDimension == undefined) {
                         var answer = readlineSync.question('The image does not contain any width or height info, do you want to inform them?[y/n]\n');
-
                         if (answer == "y") {
                             var answer2 = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
 
@@ -181,7 +178,6 @@ function useJPG(buf) {
                 } else {
                     imageData.nc = metadata.SamplesPerPixel.value;
                 }
-
                 imageData.dpi = dpi;
             }
         }
