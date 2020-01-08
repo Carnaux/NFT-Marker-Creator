@@ -1,0 +1,144 @@
+body {
+    background-color: #eee;
+    font-family: sans-serif;
+    height: 100%;
+    width: 100%;
+    color: #023962;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+}
+
+#title {
+    font-size: 5em;
+}
+
+.bt {
+    color: white;
+    border-radius: 5px;
+    width: 10em;
+    margin-top: 0.5em;
+    cursor: pointer;
+    padding: 0.25em;
+    font-size: 2em;
+    outline: inherit;
+    background-color: #023962;
+}
+
+.bt[disabled] {
+    opacity: 0.5;
+    cursor: default;
+}
+
+#hideCanvas {
+    display: none;
+}
+
+#imageCanvas {
+    margin-top: 4em;
+    width: 20em;
+    height: 20em;
+}
+
+#warning {
+    margin-top: 4em;
+    font-size: 18px;
+}
+
+/* MODAL */
+#modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.267);
+    display: none;
+    z-index: 1000000;
+}
+
+#modalBody {
+    background-color: white;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: rgb(100, 100, 100);
+
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 400px;
+    height: 280px;
+}
+
+#modalTitle {
+    position: absolute;
+    top: 40px;
+    left: 60px;
+    font-size: 20px;
+    margin: auto;
+}
+
+#confirmBt {
+    right: 100px;
+}
+
+#cancelBt {
+    left: 100px;
+}
+
+.modBt {
+    position: absolute;
+    bottom: 30px;
+    font-size: 20px;
+}
+
+#modalInput {
+    position: absolute;
+    bottom: 100px;
+    left: 120px;
+    border-color: rgb(100, 100, 100);
+}
+
+#modalTxt {
+    position: absolute;
+    bottom: 120px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* SPINNER */
+.spinner-container {
+    display: none;
+    margin-top: 4em;
+}
+
+.spinner {
+	width: 4em;
+	height: 4em;
+	clear: both;
+    margin: auto;
+    border: 4px #1A1A2C solid;
+	border-top: 4px #eee solid;
+	border-radius: 50%;
+	-webkit-animation: spin .6s infinite linear;
+	animation: spin .6s infinite linear;
+}
+
+
+@-webkit-keyframes spin {
+	from { -webkit-transform: rotate(0deg); }
+	to { -webkit-transform: rotate(359deg); }
+}
+
+@keyframes spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(359deg); }
+}
