@@ -3,6 +3,7 @@ body {
     font-family: sans-serif;
     height: 100%;
     width: 100%;
+    color: #023962;
 }
 
 .container {
@@ -18,18 +19,20 @@ body {
 }
 
 .bt {
+    color: white;
     border-radius: 5px;
     width: 10em;
     margin-top: 0.5em;
     cursor: pointer;
+    padding: 0.25em;
+    font-size: 2em;
+    outline: inherit;
+    background-color: #023962;
 }
 
-#generateBt {
-    font-size: 2em;
-}
-
-#uploadBt {
-    font-size: 2em;
+.bt[disabled] {
+    color: #666;
+    cursor: default;
 }
 
 #hideCanvas {
