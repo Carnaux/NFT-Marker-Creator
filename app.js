@@ -19,7 +19,7 @@ if (imagePath.length > 1) {
     process.exit(1);
 }
 
-let buff = fs.readFileSync(imagePath[0]);
+let buffer = fs.readFileSync(imagePath[0]);
 
 
 let imageData = {
@@ -31,9 +31,9 @@ let imageData = {
 }
 
 if (extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg") {
-    useJPG(buff)
+    useJPG(buffer)
 } else if (extName.toLowerCase() == ".png") {
-    usePNG(buff);
+    usePNG(buffer);
 }
 
 
@@ -76,9 +76,7 @@ fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext2, contentFset
 fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext3, contentFset3);
 
 function useJPG(buf) {
-
     inkjet.decode(buf, function (err, decoded) {
-
         if (err) {
             console.log("\n" + err + "\n");
             process.exit(1);
@@ -100,7 +98,7 @@ function useJPG(buf) {
             }
 
             let uint = new Uint8Array(newArr);
-
+            imageData.nc = verifyColorSpace;
             imageData.array = uint;
         }
     });
@@ -169,7 +167,6 @@ function useJPG(buf) {
                 }
 
                 if (metadata.SamplesPerPixel == null || metadata.ImageWidth == undefined) {
-
                     // var answer = readlineSync.question('The image does not contain the number of channels(nc), do you want to inform it?[y/n]\n');
 
                     // if(answer == "y"){
@@ -181,7 +178,6 @@ function useJPG(buf) {
                     //     console.log("It's not possible to proceed without the number of channels!")
                     //     process.exit(1);
                     // }
-
                 } else {
                     imageData.nc = metadata.SamplesPerPixel.value;
                 }
@@ -302,6 +298,5 @@ function rgbaToRgb(arr) {
 function setFromCmd(str) {
     let middle = str.indexOf('=');
     let value = parseInt(str.slice(middle + 1).trim());
-
     imageData.dpi = value;
 }
