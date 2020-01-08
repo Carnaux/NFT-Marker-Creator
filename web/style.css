@@ -46,8 +46,7 @@ body {
 }
 
 #warning {
-    position: absolute;
-    bottom: 80px;
+    margin-top: 4em;
     font-size: 18px;
 }
 
