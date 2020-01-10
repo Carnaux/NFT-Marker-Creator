@@ -65,8 +65,9 @@ e.g node app.js -i image.png -level=4 -min_thresh=8
 
 # Web version
 
-This version is less efficient for images with width and/or height with 1000px or higher.
+https://carnaux.github.io/NFT-Marker-Creator/
 
+This version is less efficient for images with width and/or height with 1000px or higher.
 
 Advanced options coming soon.
 
