@@ -6,20 +6,67 @@ const PNG = require('pngjs').PNG;
 const readlineSync = require('readline-sync');
 var Module = require('./NftMarkerCreator.min.js');
 
-let srcTest = path.join(__dirname, '/input/');
+var params = [
+    0,
+    0
+];
 
-let imagePath = glob.sync(srcTest + '/**/*.{jpg,JPG,jpeg,JPEG,png,PNG}', {});
+let validImageExt = [".jpg",".jpeg",".png"];
 
-let fileNameWithExt = path.basename(imagePath[0]);
+let srcImage;
+
+let buffer;
+
+let foundInputPath = {
+    b: false,
+    i: -1
+}
+
+for (let j = 2; j < process.argv.length; j++) {
+    if(process.argv[j].indexOf('-i') !== -1 || process.argv[j].indexOf('-I') !== -1){
+        foundInputPath.b = true;
+        foundInputPath.i = j+1;
+    } else {
+        params.push(process.argv[j]);
+    }
+}
+
+if(!foundInputPath.b){
+    console.log("\nERROR: No image in INPUT command!\n e.g:(-i /PATH/TO/IMAGE)\n");
+    process.exit(1);
+}else{
+    srcImage = path.join(__dirname, process.argv[foundInputPath.i]);
+}
+
+let fileNameWithExt = path.basename(srcImage);
 let fileName = path.parse(fileNameWithExt).name;
 let extName = path.parse(fileNameWithExt).ext;
 
-if (imagePath.length > 1) {
-    console.log("\nERROR: Multiple images in INPUT directory!\n")
+params[1] = fileNameWithExt;
+
+let foundExt = false;
+for (let ext in validImageExt) {  
+    if(extName.toLowerCase() === validImageExt[ext]){
+        foundExt = true;
+        break;
+    }
+}
+
+if(!foundExt){
+    console.log("\nERROR: Invalid image TYPE!\n Valid types:(jpg,JPG,jpeg,JPEG,png,PNG)\n");
     process.exit(1);
 }
 
-let buffer = fs.readFileSync(imagePath[0]);
+if(!fs.existsSync(srcImage)){
+    console.log("\nERROR: Not possible to read image, probably invalid image PATH!\n");
+    process.exit(1);
+}else{
+    buffer = fs.readFileSync(srcImage);
+}
+
+if(!fs.existsSync(path.join(__dirname, '/output/'))){
+    fs.mkdirSync(path.join(__dirname, '/output/'));
+}
 
 let imageData = {
     sizeX: 0,
@@ -33,22 +80,6 @@ if (extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg") {
     useJPG(buffer)
 } else if (extName.toLowerCase() == ".png") {
     usePNG(buffer);
-}
-
-
-var params = [
-    0,
-    fileNameWithExt
-];
-
-for (let j = 2; j < process.argv.length; j++) {
-    let cmd = process.argv[j].indexOf('-customDPI=');
-    if (cmd !== -1) {
-        setFromCmd(process.argv[j]);
-    } else {
-        params.push(process.argv[j]);
-    }
-
 }
 
 let heapSpace = Module._malloc(imageData.array.length * imageData.array.BYTES_PER_ELEMENT);
@@ -289,10 +320,4 @@ function rgbaToRgb(arr) {
         newArr.push(b);
     }
     return newArr;
-}
-
-function setFromCmd(str) {
-    let middle = str.indexOf('=');
-    let value = parseInt(str.slice(middle + 1).trim());
-    imageData.dpi = value;
 }

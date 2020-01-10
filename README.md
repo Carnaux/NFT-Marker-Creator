@@ -15,15 +15,31 @@ A Node version (preferred) and Web version are provided.
     ` npm install `
 
 
-3. Put the image you want inside the "input" folder. Make sure that it is the only JPG/PNG image there.
+3. Put the image you want inside the app folder. You can just paste it or you can create a folder. e.g
+
+     - markerCreatorAppFolder
+         - app.js
+         - NftMarkerCreator.min.js
+         - IMAGE.PNG :arrow_left:
+         - ...
+
+     or
+
+     - markerCreatorAppFolder
+          - app.js
+          - NftMarkerCreator.min.js
+          - FOLDER/IMAGE.PNG :arrow_left:
+          - ...
 
 4. Run it
 
-    ` node app.js `
+    ` node app.js -i PATH/TO/IMAGE`
+
+     In the end of the process an "output" folder will be created(if it does not exist) with the marker files.
 
 You can use additional flags with the run command.
 
-e.g node app.js -level=4 -min_thresh=8
+e.g node app.js -i image.png -level=4 -min_thresh=8
 
     -level=n
          (n is an integer in range 0 (few) to 4 (many). Default 2.'
