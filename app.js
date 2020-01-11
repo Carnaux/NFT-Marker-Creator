@@ -6,69 +6,25 @@ const PNG = require('pngjs').PNG;
 const readlineSync = require('readline-sync');
 var Module = require('./NftMarkerCreator.min.js');
 
+
+// GLOBAL VARs
 var params = [
     0,
     0
 ];
 
-let validImageExt = [".jpg",".jpeg",".png"];
+var validImageExt = [".jpg",".jpeg",".png"];
 
-let srcImage;
+var srcImage;
 
-let buffer;
+var buffer;
 
-let foundInputPath = {
+var foundInputPath = {
     b: false,
     i: -1
 }
 
-for (let j = 2; j < process.argv.length; j++) {
-    if(process.argv[j].indexOf('-i') !== -1 || process.argv[j].indexOf('-I') !== -1){
-        foundInputPath.b = true;
-        foundInputPath.i = j+1;
-    } else {
-        params.push(process.argv[j]);
-    }
-}
-
-if(!foundInputPath.b){
-    console.log("\nERROR: No image in INPUT command!\n e.g:(-i /PATH/TO/IMAGE)\n");
-    process.exit(1);
-}else{
-    srcImage = path.join(__dirname, process.argv[foundInputPath.i]);
-}
-
-let fileNameWithExt = path.basename(srcImage);
-let fileName = path.parse(fileNameWithExt).name;
-let extName = path.parse(fileNameWithExt).ext;
-
-params[1] = fileNameWithExt;
-
-let foundExt = false;
-for (let ext in validImageExt) {  
-    if(extName.toLowerCase() === validImageExt[ext]){
-        foundExt = true;
-        break;
-    }
-}
-
-if(!foundExt){
-    console.log("\nERROR: Invalid image TYPE!\n Valid types:(jpg,JPG,jpeg,JPEG,png,PNG)\n");
-    process.exit(1);
-}
-
-if(!fs.existsSync(srcImage)){
-    console.log("\nERROR: Not possible to read image, probably invalid image PATH!\n");
-    process.exit(1);
-}else{
-    buffer = fs.readFileSync(srcImage);
-}
-
-if(!fs.existsSync(path.join(__dirname, '/output/'))){
-    fs.mkdirSync(path.join(__dirname, '/output/'));
-}
-
-let imageData = {
+var imageData = {
     sizeX: 0,
     sizeY: 0,
     nc: 0,
@@ -76,34 +32,99 @@ let imageData = {
     array: []
 }
 
-if (extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg") {
-    useJPG(buffer)
-} else if (extName.toLowerCase() == ".png") {
-    usePNG(buffer);
+
+Module.onRuntimeInitialized = function(){
+
+    for (let j = 2; j < process.argv.length; j++) {
+        if(process.argv[j].indexOf('-i') !== -1 || process.argv[j].indexOf('-I') !== -1){
+            foundInputPath.b = true;
+            foundInputPath.i = j+1;
+            j++;
+        } else {
+            params.push(process.argv[j]);
+        }
+    }
+
+    if(!foundInputPath.b){
+        console.log("\nERROR: No image in INPUT command!\n e.g:(-i /PATH/TO/IMAGE)\n");
+        process.exit(1);
+    }else{
+        srcImage = path.join(__dirname, process.argv[foundInputPath.i]);
+    }
+
+    let fileNameWithExt = path.basename(srcImage);
+    let fileName = path.parse(fileNameWithExt).name;
+    let extName = path.parse(fileNameWithExt).ext;
+
+    params[1] = fileNameWithExt;
+
+    let foundExt = false;
+    for (let ext in validImageExt) {  
+        if(extName.toLowerCase() === validImageExt[ext]){
+            foundExt = true;
+            break;
+        }
+    }
+
+    if(!foundExt){
+        console.log("\nERROR: Invalid image TYPE!\n Valid types:(jpg,JPG,jpeg,JPEG,png,PNG)\n");
+        process.exit(1);
+    }
+
+    if(!fs.existsSync(srcImage)){
+        console.log("\nERROR: Not possible to read image, probably invalid image PATH!\n");
+        process.exit(1);
+    }else{
+        buffer = fs.readFileSync(srcImage);
+    }
+
+    if(!fs.existsSync(path.join(__dirname, '/output/'))){
+        fs.mkdirSync(path.join(__dirname, '/output/'));
+    }
+
+   
+    if (extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg") {
+        useJPG(buffer)
+    } else if (extName.toLowerCase() == ".png") {
+        usePNG(buffer);
+    }
+
+    let heapSpace = Module._malloc(imageData.array.length * imageData.array.BYTES_PER_ELEMENT);
+    Module.HEAPU8.set(imageData.array, heapSpace);
+    Module._createImageSet(heapSpace, imageData.dpi, imageData.sizeX, imageData.sizeY, imageData.nc, fileName, params.length, params)
+    Module._free(heapSpace);
+
+    let filenameIset = "asa.iset";
+    let filenameFset = "asa.fset";
+    let filenameFset3 = "asa.fset3";
+
+    let ext = ".iset";
+    let ext2 = ".fset";
+    let ext3 = ".fset3";
+
+    let content = Module.FS.readFile(filenameIset);
+    let contentFset = Module.FS.readFile(filenameFset);
+    let contentFset3 = Module.FS.readFile(filenameFset3);
+
+    fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext, content);
+    fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext2, contentFset);
+    fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext3, contentFset3);
+
+    let confidence = calculateQuality();
+
+    let txt = " - - - - - ";
+    if(confidence.l != 0){
+        let str = txt.split(" ");
+        str.pop();
+        str.shift();
+        for(let i = 0; i < parseInt(confidence.l); i++){
+            str[i] = " *";
+        }
+        str.push(" ");
+        txt = str.join("");
+    }
+    console.log("Confidence level: [" + txt + "] %f/5 || Entropy: %f || Current max: 5.17 min: 4.6", confidence.l, confidence.e)
 }
-
-let heapSpace = Module._malloc(imageData.array.length * imageData.array.BYTES_PER_ELEMENT);
-Module.HEAPU8.set(imageData.array, heapSpace);
-
-Module._createImageSet(heapSpace, imageData.dpi, imageData.sizeX, imageData.sizeY, imageData.nc, fileName, params.length, params)
-
-Module._free(heapSpace);
-
-let filenameIset = "asa.iset";
-let filenameFset = "asa.fset";
-let filenameFset3 = "asa.fset3";
-
-let ext = ".iset";
-let ext2 = ".fset";
-let ext3 = ".fset3";
-
-let content = Module.FS.readFile(filenameIset);
-let contentFset = Module.FS.readFile(filenameFset);
-let contentFset3 = Module.FS.readFile(filenameFset3);
-
-fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext, content);
-fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext2, contentFset);
-fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext3, contentFset3);
 
 function useJPG(buf) {
     inkjet.decode(buf, function (err, decoded) {
@@ -320,4 +341,49 @@ function rgbaToRgb(arr) {
         newArr.push(b);
     }
     return newArr;
+}
+
+function calculateQuality(){
+    let gray = toGrayscale(imageData.array);
+    let hist = getHistogram(gray);
+    let ent = 0;
+    let totSize = imageData.sizeX * imageData.sizeY;
+    for(let i = 0; i < 255; i++){ 
+        if(hist[i] > 0){
+            let temp = (hist[i]/totSize)*(Math.log(hist[i]/totSize));
+            ent += temp;
+        }
+    }
+
+    let entropy = (-1 * ent).toFixed(2);
+    let oldRange = (5.17 - 4.6);  
+    let newRange = (5 - 0);  
+    let level = (((entropy - 4.6) * newRange) / oldRange);
+    
+    if(level > 5){
+        level = 5;
+    }else if(level < 0){
+        level = 0;
+    }
+    return {l:level.toFixed(2), e: entropy};
+}
+
+function toGrayscale(arr){
+    let gray = [];
+    for(let i = 0; i < arr.length; i+=3){
+        let avg = (arr[i] + arr[i+1] + arr[i+2])/3;
+        gray.push(parseInt(avg));
+    }
+    return gray;
+}
+
+function getHistogram(arr){
+    let hist = [256];
+    for(let i = 0; i < arr.length; i++){
+        hist[i] = 0;
+    }
+    for(let i = 0; i < arr.length; i++){
+        hist[arr[i]]++;
+    }
+    return hist;
 }

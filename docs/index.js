@@ -56,6 +56,8 @@ function generate() {
 
         Module._createImageSet(heapSpace, globalObj.dpi, globalObj.w, globalObj.h, globalObj.nc, name, cmdArr.length, cmdArr);
         Module._free(heapSpace);
+
+        
         downloadIset();
     }, 500);
 }
@@ -222,14 +224,65 @@ function readImage(e) {
             }
 
             globalObj.nc = verifyColorSpace;
-            console.log(verifyColorSpace)
 
             let uint = new Uint8Array(newArr);
 
             globalObj.arr = uint;
 
+            let confidence = calculateQuality();
+            let confidenceEl = document.getElementById("confidenceLevel");
+            let childEls = confidenceEl.getElementsByClassName("confidenceEl");
+            for(let i = 0; i < parseInt(confidence.l); i++){
+                childEls[i].src = "./icons/star.svg";
+            }
+            confidenceEl.scrollIntoView();
         }
         img.src = event.target.result;
     }
     reader.readAsDataURL(e.target.files[0]);
+}
+
+function calculateQuality(){
+    let gray = toGrayscale(globalObj.arr);
+    let hist = getHistogram(gray);
+    let ent = 0;
+    let totSize = globalObj.w * globalObj.h;
+    for(let i = 0; i < 255; i++){ 
+        if(hist[i] > 0){
+            let temp = (hist[i]/totSize)*(Math.log(hist[i]/totSize));
+            ent += temp;
+        }
+    }
+    
+    let entropy = (-1 * ent).toFixed(2);
+    let oldRange = (5.17 - 4.6);  
+    let newRange = (5 - 0);  
+    let level = (((entropy - 4.6) * newRange) / oldRange);
+    
+    if(level > 5){
+        level = 5;
+    }else if(level < 0){
+        level = 0;
+    }
+    return {l:level.toFixed(2), e: entropy};
+}
+
+function toGrayscale(arr){
+    let gray = [];
+    for(let i = 0; i < arr.length; i+=3){
+        let avg = (arr[i] + arr[i+1] + arr[i+2])/3;
+        gray.push(parseInt(avg));
+    }
+    return gray;
+}
+
+function getHistogram(arr){
+    let hist = [256];
+    for(let i = 0; i < arr.length; i++){
+        hist[i] = 0;
+    }
+    for(let i = 0; i < arr.length; i++){
+        hist[arr[i]]++;
+    }
+    return hist;
 }

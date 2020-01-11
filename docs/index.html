@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <p id="title">NFT Marker Creator</p>
+        <p id="title" href="#confidenceLevel">NFT Marker Creator</p>
         <input type="file" id="imageLoader" name="imageLoader" style="display: none;"/>
         <button id="uploadBt" onclick="document.getElementById('imageLoader').click();" class="bt">Upload Image</button>
         <button id="generateBt" onclick="generate()" class="bt" disabled>Generate</button>
@@ -17,6 +17,14 @@
         <canvas id="hideCanvas"></canvas>
         <div class="spinner-container">
             <div class="spinner"></div>
+          </div>
+          <div id="confidenceLevel" class="confidence grid-template-columns">
+            <p style="font-size: 50px; margin-bottom: 0;">Confidence:</p>
+            <img class="confidenceEl" src="./icons/star2.svg"></img>
+            <img class="confidenceEl" src="./icons/star2.svg"></img>
+            <img class="confidenceEl" src="./icons/star2.svg"></img>
+            <img class="confidenceEl" src="./icons/star2.svg"></img>
+            <img class="confidenceEl" src="./icons/star2.svg"></img>
           </div>
         <p id="warning"><span style="color: red">Warning:</span>
             Images with width and/or height above 1000px might take 20min+ to generate.<br>

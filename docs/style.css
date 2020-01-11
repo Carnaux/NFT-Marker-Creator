@@ -36,12 +36,16 @@ body {
     cursor: default;
 }
 
+#generateBt{
+    margin-top: 20px;
+}
+
 #hideCanvas {
     display: none;
 }
 
 #imageCanvas {
-    margin-top: 4em;
+    margin-top: 3em;
     width: 20em;
     height: 20em;
 }
@@ -113,6 +117,13 @@ body {
     bottom: 120px;
     font-weight: bold;
     text-align: center;
+}
+.confidenceEl{
+    width: 50px;
+    height: auto;
+}
+.grid-template-columns {
+	grid-template-columns: 200px 60px 60px 60px 60px 60px;
 }
 
 /* SPINNER */
