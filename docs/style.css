@@ -15,7 +15,8 @@ body {
 }
 
 #title {
-    font-size: 5em;
+    text-align: center;
+    font-size: 4em;
 }
 
 .bt {
