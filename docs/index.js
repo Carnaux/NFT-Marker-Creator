@@ -29,6 +29,12 @@ function handleImage(e) {
 
     let extJpg = nameWithExt.substr(nameWithExt.lastIndexOf('.'));
 
+    let confidenceEl = document.getElementById("confidenceLevel");
+    let childEls = confidenceEl.getElementsByClassName("confidenceEl");
+    for(let i = 0; i < childEls.length; i++){
+        childEls[i].src = "./icons/star2.svg";
+    }
+
     if (extJpg == '.jpg' || extJpg == '.jpeg' || extJpg == '.JPG' || extJpg == '.JPEG') {
         useJpeg(e);
     } else if (extJpg == '.png' || extJpg == '.PNG') {

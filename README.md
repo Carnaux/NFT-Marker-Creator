@@ -80,3 +80,6 @@ Advanced options coming soon.
 
 ------
 #### If you want to generate you own NftMarkerCreator.min.js use the dev branch.
+
+
+"Icon made by Freepik from www.flaticon.com"
