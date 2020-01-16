@@ -4,6 +4,9 @@ This editor creates NFT markers for ARTOOKIT 5.x, and it is part of the efforts 
 
 A Node version (preferred) and Web version are provided.
 
+Check out the wiki to learn how to generate good markers! 
+https://github.com/Carnaux/NFT-Marker-Creator/wiki/Creating-good-markers
+
 ## Node version
 
 ### How to use it
