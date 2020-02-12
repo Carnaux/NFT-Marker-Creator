@@ -113,9 +113,11 @@ FLAGS += ' -s USE_ZLIB=1';
 FLAGS += ' -s USE_LIBJPEG=1';
 FLAGS += ' -s ASSERTIONS=1';
 FLAGS += ' --memory-init-file 0 '; // for memless file
-FLAGS += ' -s FORCE_FILESYSTEM=1'
+FLAGS += ' -s FORCE_FILESYSTEM=1';
 
-var WASM_FLAGS = ' -s BINARYEN_TRAP_MODE=clamp'
+var WASM_FLAGS = ' -s BINARYEN_TRAP_MODE=clamp';
+
+var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../emscripten/wasm_loader.js') +' ';
 
 var EXPORTED_FUNCTIONS = ' -s EXPORTED_FUNCTIONS=["_createImageSet"] -s EXTRA_EXPORTED_RUNTIME_METHODS=["FS"] ';
 
@@ -183,7 +185,7 @@ var compile_combine_min = format(EMCC + ' '  + INCLUDES + ' '
 
 var compile_wasm = format(EMCC + ' ' + INCLUDES + ' '
 	+ ' {OUTPUT_PATH}libar.bc ' + MAIN_SOURCES
-	+ FLAGS + WASM_FLAGS + DEFINES + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
+	+ FLAGS + WASM_FLAGS + DEFINES + PRE_FLAGS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
 	 OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_FILE);
 
 /*
