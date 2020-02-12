@@ -237,7 +237,7 @@ addJob(clean_builds);
 addJob(compile_arlib);
 //addJob(compile_kpm);
 //addJob(compile_combine);
-//addJob(compile_wasm);
+addJob(compile_wasm);
 addJob(compile_combine_min);
 // addJob(compile_all);
 
