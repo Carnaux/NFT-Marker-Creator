@@ -4,8 +4,8 @@ const glob = require('glob');
 const inkjet = require('inkjet');
 const PNG = require('pngjs').PNG;
 const readlineSync = require('readline-sync');
-var artoolkit_wasm_url = './NftMarkerCreator_wasm.wasm';
-var Module = require('./NftMarkerCreator_wasm.js');
+var artoolkit_wasm_url = './libs/NftMarkerCreator_wasm.wasm';
+var Module = require('./libs/NftMarkerCreator_wasm.js');
 
 
 // GLOBAL VARs
