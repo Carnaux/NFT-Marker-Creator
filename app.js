@@ -4,7 +4,8 @@ const glob = require('glob');
 const inkjet = require('inkjet');
 const PNG = require('pngjs').PNG;
 const readlineSync = require('readline-sync');
-var Module = require('./NftMarkerCreator.min.js');
+var artoolkit_wasm_url = './libs/NftMarkerCreator_wasm.wasm';
+var Module = require('./libs/NftMarkerCreator_wasm.js');
 
 
 // GLOBAL VARs
@@ -59,7 +60,7 @@ Module.onRuntimeInitialized = function(){
     params[1] = fileNameWithExt;
 
     let foundExt = false;
-    for (let ext in validImageExt) {  
+    for (let ext in validImageExt) {
         if(extName.toLowerCase() === validImageExt[ext]){
             foundExt = true;
             break;
@@ -82,7 +83,7 @@ Module.onRuntimeInitialized = function(){
         fs.mkdirSync(path.join(__dirname, '/output/'));
     }
 
-   
+
     if (extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg") {
         useJPG(buffer)
     } else if (extName.toLowerCase() == ".png") {
@@ -348,7 +349,7 @@ function calculateQuality(){
     let hist = getHistogram(gray);
     let ent = 0;
     let totSize = imageData.sizeX * imageData.sizeY;
-    for(let i = 0; i < 255; i++){ 
+    for(let i = 0; i < 255; i++){
         if(hist[i] > 0){
             let temp = (hist[i]/totSize)*(Math.log(hist[i]/totSize));
             ent += temp;
@@ -356,10 +357,10 @@ function calculateQuality(){
     }
 
     let entropy = (-1 * ent).toFixed(2);
-    let oldRange = (5.17 - 4.6);  
-    let newRange = (5 - 0);  
+    let oldRange = (5.17 - 4.6);
+    let newRange = (5 - 0);
     let level = (((entropy - 4.6) * newRange) / oldRange);
-    
+
     if(level > 5){
         level = 5;
     }else if(level < 0){
