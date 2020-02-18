@@ -49,7 +49,7 @@ function handleImage(e) {
 
 function generate() {
     var imageCanvas = document.querySelector('#imageCanvas');
-    imageCanvas.style.display = 'none';
+    imageCanvas.style.opacity = 0.25;
 
     var spinner = document.querySelector('.spinner-container');
     spinner.style.display = 'block';
@@ -109,6 +109,9 @@ function downloadIset() {
 
     var spinner = document.querySelector('.spinner-container');
     spinner.style.display = 'none';
+
+    var okSign = document.querySelector('.checkmark-cover');
+    okSign.style.display = 'block';
 }
 
 function getUint8(str) {

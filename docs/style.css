@@ -43,7 +43,10 @@ body {
 #hideCanvas {
     display: none;
 }
+/* #wrapper{
+    margin-top: 3em;
 
+} */
 #imageCanvas {
     margin-top: 3em;
     width: 20em;
@@ -72,7 +75,6 @@ body {
     border-radius: 10px;
     border-style: solid;
     border-color: rgb(100, 100, 100);
-
     position: fixed;
     top: 0;
     bottom: 0;
@@ -128,13 +130,16 @@ body {
 
 /* SPINNER */
 .spinner-container {
+    position: relative;
+    top: -9em;
     display: none;
-    margin-top: 4em;
+    margin-top: -4em;
+    z-index: 100;
 }
 
 .spinner {
 	width: 4em;
-	height: 4em;
+    height: 4em;
 	clear: both;
     margin: auto;
     border: 4px #1A1A2C solid;
@@ -144,7 +149,6 @@ body {
 	animation: spin .6s infinite linear;
 }
 
-
 @-webkit-keyframes spin {
 	from { -webkit-transform: rotate(0deg); }
 	to { -webkit-transform: rotate(359deg); }
@@ -153,4 +157,45 @@ body {
 @keyframes spin {
 	from { transform: rotate(0deg); }
 	to { transform: rotate(359deg); }
+}
+
+.checkmark-cover{
+    display: none;
+    position: relative;
+    top: -9em;
+    left: -7em;
+    margin-top: -4em;
+    z-index: 100;
+}
+
+.tasks-list-mark {
+    float:right;
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    margin: 5px;
+    width: 4em;
+    height: 4em;
+    background-color: rgb(103, 173, 94);
+    border: 3px solid rgb(20, 99, 10);
+    border-radius: 50%;
+    cursor:pointer;
+}
+
+.tasks-list-mark:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    margin: -9px 0 0 -10px;
+    height: 1em;
+    width: 2em;
+    border: solid rgb(20, 99, 10);
+    border-width: 0 0 4px 4px;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
 }

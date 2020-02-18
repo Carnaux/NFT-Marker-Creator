@@ -13,27 +13,31 @@
         <input type="file" id="imageLoader" name="imageLoader" style="display: none;"/>
         <button id="uploadBt" onclick="document.getElementById('imageLoader').click();" class="bt">Upload Image</button>
         <button id="generateBt" onclick="generate()" class="bt" disabled>Generate</button>
-        <canvas id="imageCanvas"></canvas>
+        <div id="wrapper">
+            <canvas id="imageCanvas"></canvas>
+            <div class="spinner-container">
+                <div class="spinner"></div>
+            </div>
+            <div class="checkmark-cover">
+                <div class="tasks-list-mark"></div>
+            </div>
+        </div>
         <canvas id="hideCanvas"></canvas>
-        <div class="spinner-container">
-            <div class="spinner"></div>
-          </div>
-          <div id="confidenceLevel" class="confidence grid-template-columns">
+        
+        <div id="confidenceLevel" class="confidence grid-template-columns">
             <p style="font-size: 50px; margin-bottom: 0;">Confidence:</p>
             <img class="confidenceEl" src="./icons/star2.svg"></img>
             <img class="confidenceEl" src="./icons/star2.svg"></img>
             <img class="confidenceEl" src="./icons/star2.svg"></img>
             <img class="confidenceEl" src="./icons/star2.svg"></img>
             <img class="confidenceEl" src="./icons/star2.svg"></img>
-          </div>
+        </div>
         <p id="warning"><span style="color: red">Warning:</span>
             Images with width and/or height above 1000px might take 20min+ to generate.<br>
             For a more efficient Marker generator, please use the Node script version:
             <a href="https://github.com/Carnaux/NFT-Marker-Creator">https://github.com/Carnaux/NFT-Marker-Creator</a><br>
         </p>
     </div>
-
-
 
     <!-- <button onclick="downloadIset()">download</button> -->
 
