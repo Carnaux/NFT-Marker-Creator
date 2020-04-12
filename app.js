@@ -1,12 +1,11 @@
 const path = require("path");
 const fs = require('fs');
 const glob = require('glob');
+const readlineSync = require('readline-sync');
 const inkjet = require('inkjet');
 const PNG = require('pngjs').PNG;
-const readlineSync = require('readline-sync');
 var artoolkit_wasm_url = './libs/NftMarkerCreator_wasm.wasm';
 var Module = require('./libs/NftMarkerCreator_wasm.js');
-
 
 // GLOBAL VARs
 var params = [
@@ -25,6 +24,9 @@ var foundInputPath = {
     i: -1
 }
 
+var noConf = false;
+var noDemo = false;
+
 var imageData = {
     sizeX: 0,
     sizeY: 0,
@@ -33,7 +35,6 @@ var imageData = {
     array: []
 }
 
-
 Module.onRuntimeInitialized = function(){
 
     for (let j = 2; j < process.argv.length; j++) {
@@ -41,7 +42,11 @@ Module.onRuntimeInitialized = function(){
             foundInputPath.b = true;
             foundInputPath.i = j+1;
             j++;
-        } else {
+        }else if(process.argv[j] == "-noConf"){
+            noConf = true;
+        }else if(process.argv[j] == "-noDemo"){
+            noDemo = true;
+        }else {
             params.push(process.argv[j]);
         }
     }
@@ -83,13 +88,37 @@ Module.onRuntimeInitialized = function(){
         fs.mkdirSync(path.join(__dirname, '/output/'));
     }
 
-
     if (extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg") {
         useJPG(buffer)
     } else if (extName.toLowerCase() == ".png") {
         usePNG(buffer);
     }
 
+    let confidence = calculateQuality();
+
+    let txt = " - - - - - ";
+    if(confidence.l != 0){
+        let str = txt.split(" ");
+        str.pop();
+        str.shift();
+        for(let i = 0; i < parseInt(confidence.l); i++){
+            str[i] = " *";
+        }
+        str.push(" ");
+        txt = str.join("");
+    }
+
+    console.log("\nConfidence level: [" + txt + "] %f/5 || Entropy: %f || Current max: 5.17 min: 4.6", confidence.l, confidence.e)
+
+    if(!noConf){
+        const answer = readlineSync.question(`\nDo you want to continue? (Y/N)\n`);
+
+        if( answer == "n"){
+            console.log("\nProcess finished by the user! \n");
+            process.exit(1);
+        }
+    }
+    
     let heapSpace = Module._malloc(imageData.array.length * imageData.array.BYTES_PER_ELEMENT);
     Module.HEAPU8.set(imageData.array, heapSpace);
     Module._createImageSet(heapSpace, imageData.dpi, imageData.sizeX, imageData.sizeY, imageData.nc, fileName, params.length, params)
@@ -111,20 +140,30 @@ Module.onRuntimeInitialized = function(){
     fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext2, contentFset);
     fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext3, contentFset3);
 
-    let confidence = calculateQuality();
+    if(!noDemo){
+        console.log("\nFinished marker creation!\nNow configuring demo! \n")
 
-    let txt = " - - - - - ";
-    if(confidence.l != 0){
-        let str = txt.split(" ");
-        str.pop();
-        str.shift();
-        for(let i = 0; i < parseInt(confidence.l); i++){
-            str[i] = " *";
+        let demoHTML = fs.readFileSync("./demo/nft.html").toString('utf8').split("\n");
+        addNewMarker(demoHTML, fileName);
+        let newHTML = demoHTML.join('\n');
+    
+        fs.writeFileSync("./demo/nft.html",newHTML,{encoding:'utf8',flag:'w'});
+
+        const markerDir = path.join(__dirname, '/demo/public/marker/');
+
+        const files = fs.readdirSync(markerDir);
+        for (const file of files) {
+            fs.unlink(path.join(markerDir, file), err => {
+              if (err) throw err;
+            });
         }
-        str.push(" ");
-        txt = str.join("");
+    
+        fs.writeFileSync(markerDir + fileName + ext, content);
+        fs.writeFileSync(markerDir + fileName + ext2, contentFset);
+        fs.writeFileSync(markerDir + fileName + ext3, contentFset3);
+    
+        console.log("Finished!\nTo run demo use: 'npm run demo'");
     }
-    console.log("Confidence level: [" + txt + "] %f/5 || Entropy: %f || Current max: 5.17 min: 4.6", confidence.l, confidence.e)
 }
 
 function useJPG(buf) {
@@ -387,4 +426,13 @@ function getHistogram(arr){
         hist[arr[i]]++;
     }
     return hist;
+}
+
+function addNewMarker(text, name){
+    for(let i = 0; i < text.length; i++){
+        if(text[i].trim().includes("<script>MARKER_NAME =")){
+            text[i] = "<script>MARKER_NAME = '" + name + "'</script>"
+            break;
+        }
+    }
 }

@@ -4,11 +4,12 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "demo": "cd demo && node demoServer.js"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "express": "^4.17.1",
     "glob": "^7.1.6",
     "inkjet": "^2.1.2",
     "jpeg-js": "^0.3.6",
