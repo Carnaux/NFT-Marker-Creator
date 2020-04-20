@@ -9,8 +9,6 @@ var Module = require('./libs/NftMarkerCreator_wasm.js');
 
 // GLOBAL VARs
 var params = [
-    0,
-    0
 ];
 
 var validImageExt = [".jpg",".jpeg",".png"];
@@ -36,7 +34,7 @@ var imageData = {
 }
 
 Module.onRuntimeInitialized = function(){
-
+    
     for (let j = 2; j < process.argv.length; j++) {
         if(process.argv[j].indexOf('-i') !== -1 || process.argv[j].indexOf('-I') !== -1){
             foundInputPath.b = true;
@@ -62,7 +60,7 @@ Module.onRuntimeInitialized = function(){
     let fileName = path.parse(fileNameWithExt).name;
     let extName = path.parse(fileNameWithExt).ext;
 
-    params[1] = fileNameWithExt;
+    // params[1] = fileNameWithExt;
 
     let foundExt = false;
     for (let ext in validImageExt) {
@@ -109,7 +107,7 @@ Module.onRuntimeInitialized = function(){
     }
 
     console.log("\nConfidence level: [" + txt + "] %f/5 || Entropy: %f || Current max: 5.17 min: 4.6", confidence.l, confidence.e)
-
+    
     if(!noConf){
         const answer = readlineSync.question(`\nDo you want to continue? (Y/N)\n`);
 
@@ -119,10 +117,19 @@ Module.onRuntimeInitialized = function(){
         }
     }
     
+    let paramStr = params.join(' ');
+    // console.log(paramStr)
+
+    let StrBuffer = Module._malloc(paramStr.length + 1);
+    Module.writeStringToMemory(paramStr, StrBuffer);
+      
     let heapSpace = Module._malloc(imageData.array.length * imageData.array.BYTES_PER_ELEMENT);
     Module.HEAPU8.set(imageData.array, heapSpace);
-    Module._createImageSet(heapSpace, imageData.dpi, imageData.sizeX, imageData.sizeY, imageData.nc, fileName, params.length, params)
+
+    Module._createImageSet(heapSpace, imageData.dpi, imageData.sizeX, imageData.sizeY, imageData.nc, StrBuffer)
+    
     Module._free(heapSpace);
+    Module._free(StrBuffer);
 
     let filenameIset = "asa.iset";
     let filenameFset = "asa.fset";
@@ -143,13 +150,17 @@ Module.onRuntimeInitialized = function(){
     if(!noDemo){
         console.log("\nFinished marker creation!\nNow configuring demo! \n")
 
+        const markerDir = path.join(__dirname, '/demo/public/marker/');
+
+        if(!fs.existsSync(markerDir)){
+            fs.mkdirSync(markerDir);
+        }
+
         let demoHTML = fs.readFileSync("./demo/nft.html").toString('utf8').split("\n");
         addNewMarker(demoHTML, fileName);
         let newHTML = demoHTML.join('\n');
     
         fs.writeFileSync("./demo/nft.html",newHTML,{encoding:'utf8',flag:'w'});
-
-        const markerDir = path.join(__dirname, '/demo/public/marker/');
 
         const files = fs.readdirSync(markerDir);
         for (const file of files) {
@@ -167,6 +178,7 @@ Module.onRuntimeInitialized = function(){
 }
 
 function useJPG(buf) {
+    
     inkjet.decode(buf, function (err, decoded) {
         if (err) {
             console.log("\n" + err + "\n");
@@ -193,7 +205,7 @@ function useJPG(buf) {
             imageData.array = uint;
         }
     });
-
+    
     inkjet.exif(buf, function (err, metadata) {
         if (err) {
             console.log("\n" + err + "\n");

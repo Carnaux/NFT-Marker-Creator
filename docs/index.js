@@ -56,6 +56,7 @@ function generate() {
 
     setTimeout(() => {
         let cmdArr = [0, name];
+        // console.log(Module)
 
         let heapSpace = Module._malloc(globalObj.arr.length * globalObj.arr.BYTES_PER_ELEMENT); // 1
         Module.HEAPU8.set(globalObj.arr, heapSpace); // 2

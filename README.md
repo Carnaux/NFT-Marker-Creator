@@ -7,6 +7,8 @@ A Node version (preferred) and Web version are provided.
 Check out the wiki to learn how to generate good markers! 
 https://github.com/Carnaux/NFT-Marker-Creator/wiki/Creating-good-markers
 
+If any errors occours please open a issue. 
+
 ## Node version
 
 ### How to use it
@@ -62,10 +64,6 @@ e.g node app.js -i image.png -level=4 -min_thresh=8
     -min_dpi=<min_dpi>
     -background
          Run in background, i.e. as daemon detached from controlling terminal. (macOS and Linux only.)
-    -log=<path>
-    -loglevel=x
-         x is one of: DEBUG, INFO, WARN, ERROR. Default is INFO.
-    -exitcode=<path>
     --help -h -?  
           Display this help
    
