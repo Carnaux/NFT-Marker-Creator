@@ -115,11 +115,11 @@ FLAGS += ' -s ASSERTIONS=1';
 FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += ' -s FORCE_FILESYSTEM=1';
 
-var WASM_FLAGS = ' -s BINARYEN_TRAP_MODE=clamp';
-
+// var WASM_FLAGS = ' -s BINARYEN_TRAP_MODE=clamp';
+var WASM_FLAGS = "";
 var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../emscripten/wasm_loader.js') +' ';
 
-var EXPORTED_FUNCTIONS = ' -s EXPORTED_FUNCTIONS=["_createImageSet"] -s EXTRA_EXPORTED_RUNTIME_METHODS=["FS"] ';
+var EXPORTED_FUNCTIONS = ' -s EXPORTED_FUNCTIONS=["_createImageSet"] -s EXTRA_EXPORTED_RUNTIME_METHODS=["FS, writeStringToMemory"] ';
 
 /* DEBUG FLAGS */
 var DEBUG_FLAGS = ' -g ';
