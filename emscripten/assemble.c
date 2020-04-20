@@ -126,7 +126,7 @@ static int   readImageFromFile(const char *filename, ARUint8 **image_p, int *xsi
 static int   setDPI( void );
 static void  write_exitcode(void);
 
-int EMSCRIPTEN_KEEPALIVE createImageSet(ARUint8 *imageIn, float dpiIn, int xsizeIn, int ysizeIn, int ncIn, const char *name, int cmdSize,  char *cmdArr[] )
+int EMSCRIPTEN_KEEPALIVE createImageSet(ARUint8 *imageIn, float dpiIn, int xsizeIn, int ysizeIn, int ncIn, char * cmdStr )
 {
     AR2JpegImageT       *jpegImage = NULL;
     ARUint8             *image = NULL;
@@ -150,68 +150,85 @@ int EMSCRIPTEN_KEEPALIVE createImageSet(ARUint8 *imageIn, float dpiIn, int xsize
     nc = ncIn;
     image = imageIn;
 
-
-
-    for( i = 1; i < cmdSize; i++ ) {
-        if( strncmp(cmdArr[i], "-dpi=", 5) == 0 ) {
-            if( sscanf(&cmdArr[i][5], "%f", &dpi) != 1 ) usage(cmdArr[0]);
-        } else if( strncmp(cmdArr[i], "-sd_thresh=", 11) == 0 ) {
-            if( sscanf(&cmdArr[i][11], "%f", &sd_thresh) != 1 ) usage(cmdArr[0]);
-        } else if( strncmp(cmdArr[i], "-max_thresh=", 12) == 0 ) {
-            if( sscanf(&cmdArr[i][12], "%f", &max_thresh) != 1 ) usage(cmdArr[0]);
-        } else if( strncmp(cmdArr[i], "-min_thresh=", 12) == 0 ) {
-            if( sscanf(&cmdArr[i][12], "%f", &min_thresh) != 1 ) usage(cmdArr[0]);
-        } else if( strncmp(cmdArr[i], "-feature_density=", 13) == 0 ) {
-            if( sscanf(&cmdArr[i][13], "%d", &featureDensity) != 1 ) usage(cmdArr[0]);
-        } else if( strncmp(cmdArr[i], "-level=", 7) == 0 ) {
-            if( sscanf(&cmdArr[i][7], "%d", &tracking_extraction_level) != 1 ) usage(cmdArr[0]);
-        } else if( strncmp(cmdArr[i], "-leveli=", 8) == 0 ) {
-            if( sscanf(&cmdArr[i][8], "%d", &initialization_extraction_level) != 1 ) usage(cmdArr[0]);
-        } else if( strncmp(cmdArr[i], "-max_dpi=", 9) == 0 ) {
-            if( sscanf(&cmdArr[i][9], "%f", &dpiMax) != 1 ) usage(cmdArr[0]);
-        } else if( strncmp(cmdArr[i], "-min_dpi=", 9) == 0 ) {
-            if( sscanf(&cmdArr[i][9], "%f", &dpiMin) != 1 ) usage(cmdArr[0]);
-        } else if( strcmp(cmdArr[i], "-background") == 0 ) {
-            background = 1;
-        } else if( strcmp(cmdArr[i], "-nofset") == 0 ) {
-            genfset = 0;
-        } else if( strcmp(cmdArr[i], "-fset") == 0 ) {
-            genfset = 1;
-        } else if( strcmp(cmdArr[i], "-nofset2") == 0 ) {
-            ARLOGe("Error: -nofset2 option no longer supported as of ARToolKit v5.3.\n");
-            exit(0);
-        } else if( strcmp(cmdArr[i], "-fset2") == 0 ) {
-            ARLOGe("Error: -fset2 option no longer supported as of ARToolKit v5.3.\n");
-            exit(0);
-        } else if( strcmp(cmdArr[i], "-nofset3") == 0 ) {
-            genfset3 = 0;
-        } else if( strcmp(cmdArr[i], "-fset3") == 0 ) {
-            genfset3 = 1;
-        } else if( strncmp(cmdArr[i], "-log=", 5) == 0 ) {
-            strncpy(logfile, &(cmdArr[i][5]), sizeof(logfile) - 1);
-            logfile[sizeof(logfile) - 1] = '\0'; // Ensure NULL termination.
-        } else if( strncmp(cmdArr[i], "-loglevel=", 10) == 0 ) {
-            if (strcmp(&(cmdArr[i][10]), "DEBUG") == 0) arLogLevel = AR_LOG_LEVEL_DEBUG;
-            else if (strcmp(&(cmdArr[i][10]), "INFO") == 0) arLogLevel = AR_LOG_LEVEL_INFO;
-            else if (strcmp(&(cmdArr[i][10]), "WARN") == 0) arLogLevel = AR_LOG_LEVEL_WARN;
-            else if (strcmp(&(cmdArr[i][10]), "ERROR") == 0) arLogLevel = AR_LOG_LEVEL_ERROR;
-            else usage(cmdArr[0]);
-         } else if( strncmp(cmdArr[i], "-exitcode=", 10) == 0 ) {
-            strncpy(exitcodefile, &(cmdArr[i][10]), sizeof(exitcodefile) - 1);
-            exitcodefile[sizeof(exitcodefile) - 1] = '\0'; // Ensure NULL termination.
-        } else if (strcmp(cmdArr[i], "--version") == 0 || strcmp(cmdArr[i], "-version") == 0 || strcmp(cmdArr[i], "-v") == 0) {
-            ARLOG("%s version %s\n", cmdArr[0], AR_HEADER_VERSION_STRING);
-            exit(0);
-        } else if (strcmp(cmdArr[i], "--help") == 0 || strcmp(cmdArr[i], "-h") == 0 || strcmp(cmdArr[i], "-?") == 0) {
-            usage(cmdArr[0]);
-        } else if( filename[0] == '\0' ) {
-            strncpy(filename, cmdArr[i], sizeof(filename) - 1);
-            filename[sizeof(filename) - 1] = '\0'; // Ensure NULL termination.
-        } else {
-            ARLOGe("Error: unrecognised option '%s'\n", cmdArr[i]);
-            usage(cmdArr[0]);
-        }
+    int cmdLen = strlen(cmdStr);
+    ARLOGi("\nCommands: %s\n", cmdStr);
+  
+    if(strstr(cmdStr, "-dpi=") != NULL) {  
+        char *result = strstr(cmdStr, "-dpi=");
+        int pos = (result - cmdStr);
+        sscanf(&cmdStr[pos + 5], "%f", &dpi);
     }
+    if(strstr(cmdStr, "-sd_thresh=") != NULL) {
+        char *result = strstr(cmdStr, "-sd_thresh=");
+        int pos = (result - cmdStr);
+        sscanf(&cmdStr[pos + 11], "%f", &sd_thresh);
+    }
+    if(strstr(cmdStr, "-max_thresh=") != NULL) {
+        char *result = strstr(cmdStr, "-max_thresh=");
+        int pos = (result - cmdStr);
+        sscanf(&cmdStr[pos + 15], "%f", &max_thresh);
+    }
+    if(strstr(cmdStr, "-min_thresh=") != NULL) {
+        char *result = strstr(cmdStr, "-min_thresh=");
+        int pos = (result - cmdStr);
+        sscanf(&cmdStr[pos + 12], "%f", &min_thresh);
+    }
+    if(strstr(cmdStr, "-feature_density=") != NULL) {
+        char *result = strstr(cmdStr, "-feature_density=");
+        int pos = (result - cmdStr);
+        sscanf(&cmdStr[pos + 13], "%d",  &featureDensity);
+    }
+    if(strstr(cmdStr, "-level=") != NULL) {
+        char *result = strstr(cmdStr, "-level=");
+        int pos = (result - cmdStr);
+        sscanf(&cmdStr[pos + 7], "%d", &tracking_extraction_level);
+    }
+    if(strstr(cmdStr, "-leveli=") != NULL) {
+        char *result = strstr(cmdStr, "-leveli=");
+        int pos = (result - cmdStr);
+        sscanf(&cmdStr[pos + 8], "%d", &initialization_extraction_level);
+    }
+    if(strstr(cmdStr, "-max_dpi=") != NULL) {
+        char *result = strstr(cmdStr, "-max_dpi=");
+        int pos = (result - cmdStr);
+        sscanf(&cmdStr[pos + 9], "%f", &dpiMax);
+    }
+    if(strstr(cmdStr, "-min_dpi=") != NULL) {
+        char *result = strstr(cmdStr, "-min_dpi=");
+        int pos = (result - cmdStr);
+        sscanf(&cmdStr[pos + 9], "%f", &dpiMin);
+    }
+    if(strstr(cmdStr, "-background") != NULL) {
+        background = 1;
+    }
+    if(strstr(cmdStr, "-nofset") != NULL) {
+        genfset = 0;
+    }
+    if(strstr(cmdStr, "-fset") != NULL) {
+        genfset = 1;
+    }
+    if(strstr(cmdStr, "-nofset3") != NULL) {
+        genfset3 = 0;
+    }
+    if(strstr(cmdStr, "-fset3") != NULL) {   
+        genfset3 = 1;
+    }
+    if(strstr(cmdStr, "--help") != NULL || strstr(cmdStr, "-h") != NULL || strstr(cmdStr, "-?") != NULL) {   
+        usage("Marker Generator");
+    }
+
+    //     } else if( strncmp(cmdArr[i], "-log=", 5) == 0 ) {
+    //         strncpy(logfile, &(cmdArr[i][5]), sizeof(logfile) - 1);
+    //         logfile[sizeof(logfile) - 1] = '\0'; // Ensure NULL termination.
+    //     } else if( strncmp(cmdArr[i], "-loglevel=", 10) == 0 ) {
+    //         if (strcmp(&(cmdArr[i][10]), "DEBUG") == 0) arLogLevel = AR_LOG_LEVEL_DEBUG;
+    //         else if (strcmp(&(cmdArr[i][10]), "INFO") == 0) arLogLevel = AR_LOG_LEVEL_INFO;
+    //         else if (strcmp(&(cmdArr[i][10]), "WARN") == 0) arLogLevel = AR_LOG_LEVEL_WARN;
+    //         else if (strcmp(&(cmdArr[i][10]), "ERROR") == 0) arLogLevel = AR_LOG_LEVEL_ERROR;
+    //         else usage(cmdArr[0]);
+    //     } else if (strcmp(cmdArr[i], "--help") == 0 || strcmp(cmdArr[i], "-h") == 0 || strcmp(cmdArr[i], "-?") == 0) {
+    //         usage(cmdArr[0]);
+
 
 char *filename = "asa";
 
@@ -294,15 +311,9 @@ char *filename = "asa";
     }
 
     if (genfset) {
-         tracking_extraction_level = TRACKING_EXTRACTION_LEVEL_DEFAULT;
-        // if (tracking_extraction_level == -1 && (sd_thresh  == -1.0 || min_thresh == -1.0 || max_thresh == -1.0 || occ_size == -1)) {
-        //     do {
-        //         printf("Select extraction level for tracking features, 0(few) <--> 4(many), [default=%d]: ", TRACKING_EXTRACTION_LEVEL_DEFAULT);
-        //         if( fgets(buf, sizeof(buf), stdin) == NULL ) EXIT(E_USER_INPUT_CANCELLED);
-        //         if (buf[0] == '\n') tracking_extraction_level = TRACKING_EXTRACTION_LEVEL_DEFAULT;
-        //         else sscanf(buf, "%d", &tracking_extraction_level);
-        //     } while (tracking_extraction_level < 0 || tracking_extraction_level > 4);
-        // }
+        if (tracking_extraction_level == -1){
+            tracking_extraction_level = TRACKING_EXTRACTION_LEVEL_DEFAULT;
+        }
         switch (tracking_extraction_level) {
             case 0:
                 if( sd_thresh  == -1.0f ) sd_thresh  = AR2_DEFAULT_SD_THRESH_L0;
@@ -337,20 +348,15 @@ char *filename = "asa";
              default: // We only get to here if the parameters are already set.
                 break;
         }
+        ARLOGi("Tracking Extraction Level = %d\n", tracking_extraction_level);
         ARLOGi("MAX_THRESH  = %f\n", max_thresh);
         ARLOGi("MIN_THRESH  = %f\n", min_thresh);
         ARLOGi("SD_THRESH   = %f\n", sd_thresh);
     }
     if (genfset3) {
-        initialization_extraction_level = INITIALIZATION_EXTRACTION_LEVEL_DEFAULT;
-        // if (initialization_extraction_level == -1 && featureDensity == -1) {
-        //     do {
-        //         printf("Select extraction level for initializing features, 0(few) <--> 3(many), [default=%d]: ", INITIALIZATION_EXTRACTION_LEVEL_DEFAULT);
-        //         if( fgets(buf,1024,stdin) == NULL ) EXIT(E_USER_INPUT_CANCELLED);
-        //         if (buf[0] == '\n') initialization_extraction_level = INITIALIZATION_EXTRACTION_LEVEL_DEFAULT;
-        //         else sscanf(buf, "%d", &initialization_extraction_level);
-        //     } while (initialization_extraction_level < 0 || initialization_extraction_level > 3);
-        // }
+        if (initialization_extraction_level == -1 && featureDensity == -1) {
+            initialization_extraction_level = INITIALIZATION_EXTRACTION_LEVEL_DEFAULT;
+        }
         switch(initialization_extraction_level) {
             case 0:
                 if( featureDensity  == -1 ) featureDensity  = KPM_SURF_FEATURE_DENSITY_L0;
@@ -366,13 +372,9 @@ char *filename = "asa";
                 if( featureDensity  == -1 ) featureDensity  = KPM_SURF_FEATURE_DENSITY_L3;
                 break;
         }
+        ARLOGi("Initialization Extraction Level = %d\n", initialization_extraction_level);
         ARLOGi("SURF_FEATURE = %d\n", featureDensity);
     }
-
-    // if ((err = readImageFromFile(filename, &image, &xsize, &ysize, &nc, &dpi)) != 0) {
-    //     ARLOGe("Error reading image from file '%s'.\n", filename);
-    //     EXIT(err);
-    // }
 
     setDPI();
     
@@ -543,27 +545,13 @@ static int setDPI( void )
 
 
     if (dpiMin == -1.0f) {
-         dpiMin = dpiMinAllowable;
-        // for (;;) {
-        //     printf("Enter the minimum image resolution (DPI, in range [%.3f, %.3f]): ", dpiMinAllowable, (dpiMax == -1.0f ? dpi : dpiMax));
-        //     if( fgets( buf1, 256, stdin ) == NULL ) EXIT(E_USER_INPUT_CANCELLED);
-        //     if( sscanf(buf1, "%f", &dpiMin) == 0 ) continue;
-        //     if (dpiMin >= dpiMinAllowable && dpiMin <= (dpiMax == -1.0f ? dpi : dpiMax)) break;
-        //     else printf("Error: you entered %.3f, but value must be greater than or equal to %.3f and less than or equal to %.3f.\n", dpiMin, dpiMinAllowable, (dpiMax == -1.0f ? dpi : dpiMax));
-        // }
+        dpiMin = dpiMinAllowable;
     } else if (dpiMin < dpiMinAllowable) {
         ARLOGe("Warning: -min_dpi=%.3f smaller than minimum allowable. Value will be adjusted to %.3f.\n", dpiMin, dpiMinAllowable);
         dpiMin = dpiMinAllowable;
     }
     if (dpiMax == -1.0f) {
         dpiMax = dpi;
-        // for (;;) {
-        //     printf("Enter the maximum image resolution (DPI, in range [%.3f, %.3f]): ", dpiMin, dpi);
-        //     if( fgets( buf1, 256, stdin ) == NULL ) EXIT(E_USER_INPUT_CANCELLED);
-        //     if( sscanf(buf1, "%f", &dpiMax) == 0 ) continue;
-        //     if (dpiMax >= dpiMin && dpiMax <= dpi) break;
-        //     else printf("Error: you entered %.3f, but value must be greater than or equal to minimum resolution (%.3f) and less than or equal to image resolution (%.3f).\n", dpiMax, dpiMin, dpi);
-        // }
     } else if (dpiMax > dpi) {
         ARLOGe("Warning: -max_dpi=%.3f larger than maximum allowable. Value will be adjusted to %.3f.\n", dpiMax, dpi);
         dpiMax = dpi;
@@ -688,6 +676,8 @@ static int readImageFromFile(const char *filename, ARUint8 **image_p, int *xsize
     
     return 0;
 }
+
+
 
 static void write_exitcode(void)
 {
