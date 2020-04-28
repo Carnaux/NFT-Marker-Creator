@@ -51,19 +51,27 @@ function generate() {
     var imageCanvas = document.querySelector('#imageCanvas');
     imageCanvas.style.opacity = 0.25;
 
+    var okSign = document.querySelector('.checkmark-cover');
+    okSign.style.display = 'none';
+
     var spinner = document.querySelector('.spinner-container');
     spinner.style.display = 'block';
 
     setTimeout(() => {
         let cmdArr = [0, name];
-        // console.log(Module)
 
+        let paramStr = cmdArr.join(' ');
+        console.log(paramStr)
+        let StrBuffer = Module._malloc(paramStr.length + 1);
+        Module.writeStringToMemory(paramStr, StrBuffer);
+        
         let heapSpace = Module._malloc(globalObj.arr.length * globalObj.arr.BYTES_PER_ELEMENT); // 1
         Module.HEAPU8.set(globalObj.arr, heapSpace); // 2
 
-        Module._createImageSet(heapSpace, globalObj.dpi, globalObj.w, globalObj.h, globalObj.nc, name, cmdArr.length, cmdArr);
-        Module._free(heapSpace);
+        Module._createImageSet(heapSpace, globalObj.dpi, globalObj.w, globalObj.h, globalObj.nc, StrBuffer);
 
+        Module._free(heapSpace);
+        Module._free(StrBuffer);
         
         downloadIset();
     }, 500);

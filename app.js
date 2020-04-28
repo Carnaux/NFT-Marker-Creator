@@ -60,8 +60,6 @@ Module.onRuntimeInitialized = function(){
     let fileName = path.parse(fileNameWithExt).name;
     let extName = path.parse(fileNameWithExt).ext;
 
-    // params[1] = fileNameWithExt;
-
     let foundExt = false;
     for (let ext in validImageExt) {
         if(extName.toLowerCase() === validImageExt[ext]){
@@ -118,7 +116,6 @@ Module.onRuntimeInitialized = function(){
     }
     
     let paramStr = params.join(' ');
-    // console.log(paramStr)
 
     let StrBuffer = Module._malloc(paramStr.length + 1);
     Module.writeStringToMemory(paramStr, StrBuffer);
