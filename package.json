@@ -12,7 +12,7 @@
     "express": "^4.17.1",
     "glob": "^7.1.6",
     "inkjet": "^2.1.2",
-    "jpeg-js": "^0.3.6",
+    "jpeg-js": "^0.4.0",
     "pngjs": "^3.4.0",
     "readline-sync": "^1.4.10"
   }
