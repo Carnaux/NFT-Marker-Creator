@@ -24,6 +24,7 @@ var foundInputPath = {
 
 var noConf = false;
 var noDemo = false;
+var onlyConfidence = false;
 
 var imageData = {
     sizeX: 0,
@@ -44,6 +45,8 @@ Module.onRuntimeInitialized = function(){
             noConf = true;
         }else if(process.argv[j] == "-noDemo"){
             noDemo = true;
+        }else if(process.argv[j] == "-onlyConfidence"){
+            onlyConfidence = true;
         }else {
             params.push(process.argv[j]);
         }
@@ -104,8 +107,14 @@ Module.onRuntimeInitialized = function(){
         txt = str.join("");
     }
 
+    if(onlyConfidence) {
+        console.log("%f", confidence.l);
+        process.exit(1);
+    }
+
     console.log("\nConfidence level: [" + txt + "] %f/5 || Entropy: %f || Current max: 5.17 min: 4.6", confidence.l, confidence.e)
     
+
     if(!noConf){
         const answer = readlineSync.question(`\nDo you want to continue? (Y/N)\n`);
 
