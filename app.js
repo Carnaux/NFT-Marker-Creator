@@ -208,7 +208,7 @@ function useJPG(buf) {
             console.log("\n" + err + "\n");
             process.exit(1);
         } else {
-            if (metadata == null || metadata == undefined || metadata.length == undefined) {
+            if (metadata == null || metadata == undefined || Object.keys(metadata).length == undefined) {
                 var answer = readlineSync.question('The EXIF info of this image is empty or it does not exist. Do you want to inform its properties manually?[y/n]\n');
 
                 if (answer == "y") {
