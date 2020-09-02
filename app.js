@@ -3,6 +3,7 @@ const fs = require('fs');
 const glob = require('glob');
 const readlineSync = require('readline-sync');
 const inkjet = require('inkjet');
+const im = require('imagemagick');
 const PNG = require('pngjs').PNG;
 var artoolkit_wasm_url = './libs/NftMarkerCreator_wasm.wasm';
 var Module = require('./libs/NftMarkerCreator_wasm.js');
@@ -34,7 +35,7 @@ var imageData = {
     array: []
 }
 
-Module.onRuntimeInitialized = function(){
+Module.onRuntimeInitialized = async function(){
     
     for (let j = 2; j < process.argv.length; j++) {
         if(process.argv[j].indexOf('-i') !== -1 || process.argv[j].indexOf('-I') !== -1){
@@ -88,11 +89,11 @@ Module.onRuntimeInitialized = function(){
     }
 
     if (extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg") {
-        useJPG(buffer)
+        await useJPG(buffer)
     } else if (extName.toLowerCase() == ".png") {
         usePNG(buffer);
     }
-
+    // console.log('Calculate Quality');
     let confidence = calculateQuality();
 
     let txt = " - - - - - ";
@@ -183,7 +184,7 @@ Module.onRuntimeInitialized = function(){
     }
 }
 
-function useJPG(buf) {
+async function useJPG(buf) {
     
     inkjet.decode(buf, function (err, decoded) {
         if (err) {
@@ -212,86 +213,126 @@ function useJPG(buf) {
         }
     });
     
-    inkjet.exif(buf, function (err, metadata) {
-        if (err) {
-            console.log("\n" + err + "\n");
-            process.exit(1);
-        } else {
-            if (metadata == null || metadata == undefined || Object.keys(metadata).length == undefined || Object.keys(metadata).length <= 0) {
-                var answer = readlineSync.question('The EXIF info of this image is empty or it does not exist. Do you want to inform its properties manually?[y/n]\n');
+    await extractExif(buf);
+    // console.log('after extractExif')
+}
 
-                if (answer == "y") {
-                    var answerWH = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
-
-                    let valWH = getValues(answerWH, "wh");
-                    imageData.sizeX = valWH.w;
-                    imageData.sizeY = valWH.h;
-
-                    // var answerNC = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
-
-                    // let valNC = getValues(answerNC, "nc");
-                    // imageData.nc = valNC;
-
-                    var answerDPI = readlineSync.question('Inform the DPI: e.g DPI=220 [Default = 72](Press enter to use default)\n');
-
-                    if (answerDPI == "") {
-                        imageData.dpi = 72;
-                    } else {
-                        let val = getValues(answerDPI, "dpi");
-                        imageData.dpi = val;
-                    }
-                } else {
-                    console.log("Exiting process!")
-                    process.exit(1);
-                }
+function extractExif(buf) {
+    return new Promise((resolve, reject)=>{
+        // console.log('extractExif')
+        inkjet.exif(buf, async function (err, metadata) {
+            // console.log('exif')
+            if (err) {
+                console.log("\n" + err + "\n");
+                process.exit(1);
             } else {
-                let dpi = Math.min(parseInt(metadata.XResolution.value), parseInt(metadata.YResolution.value));
-                if (dpi == null || dpi == undefined || dpi == NaN) {
-                    console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
-                    dpi = 72;
-                }
-
-                if (metadata.ImageWidth == null || metadata.ImageWidth == undefined) {
-                    if (metadata.PixelXDimension == null || metadata.PixelXDimension == undefined) {
-                        var answer = readlineSync.question('The image does not contain any width or height info, do you want to inform them?[y/n]\n');
+                if (metadata == null || metadata == undefined || Object.keys(metadata).length == undefined || Object.keys(metadata).length <= 0) {
+                    // console.log(metadata);
+                    let ret = await imageMagickIdentify(srcImage);
+                    //console.log('ret:', ret);
+                    {
+                    if(ret.err){
+                        console.log(ret.err);
+                        var answer = readlineSync.question('The EXIF info of this image is empty or it does not exist. Do you want to inform its properties manually?[y/n]\n');
+        
                         if (answer == "y") {
-                            var answer2 = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
-
-                            let vals = getValues(answer2, "wh");
-                            imageData.sizeX = vals.w;
-                            imageData.sizeY = vals.h;
+                            var answerWH = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
+        
+                            let valWH = getValues(answerWH, "wh");
+                            imageData.sizeX = valWH.w;
+                            imageData.sizeY = valWH.h;
+        
+                            // var answerNC = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
+        
+                            // let valNC = getValues(answerNC, "nc");
+                            // imageData.nc = valNC;
+        
+                            var answerDPI = readlineSync.question('Inform the DPI: e.g DPI=220 [Default = 72](Press enter to use default)\n');
+        
+                            if (answerDPI == "") {
+                                imageData.dpi = 72;
+                            } else {
+                                let val = getValues(answerDPI, "dpi");
+                                imageData.dpi = val;
+                            }
                         } else {
-                            console.log("It's not possible to proceed without width or height info!")
+                            console.log("Exiting process!")
                             process.exit(1);
                         }
                     } else {
-                        imageData.sizeX = metadata.PixelXDimension.value;
-                        imageData.sizeY = metadata.PixelYDimension.value;
+                        //console.log(ret.features);
+                        imageData.sizeX = ret.features.width;
+                        imageData.sizeY = ret.features.height;
+                        var resolution = ret.features.resolution;
+                        let dpi = null;
+                        if(resolution) {
+                            let resolutions = resolution.split('x');
+                            if(resolutions.length == 2) {
+                                dpi = Math.min(parseInt(resolutions[0]), parseInt(resolutions[1]));
+                                if (dpi == null || dpi == undefined || dpi == NaN) {
+                                    console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
+                                    dpi = 72;
+                                }
+                            }
+                            
+                        }
+                        
+                        imageData.dpi = dpi;
+                        // console.log(imageData);
                     }
-                } else {
-                    imageData.sizeX = metadata.ImageWidth.value;
-                    imageData.sizeY = metadata.ImageLength.value;
                 }
-
-                if (metadata.SamplesPerPixel == null || metadata.ImageWidth == undefined) {
-                    // var answer = readlineSync.question('The image does not contain the number of channels(nc), do you want to inform it?[y/n]\n');
-
-                    // if(answer == "y"){
-                    //     var answer2 = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
-
-                    //     let vals = getValues(answer2, "nc");
-                    //     imageData.nc = vals;
-                    // }else{
-                    //     console.log("It's not possible to proceed without the number of channels!")
-                    //     process.exit(1);
-                    // }
                 } else {
-                    imageData.nc = metadata.SamplesPerPixel.value;
+                    let dpi = Math.min(parseInt(metadata.XResolution.value), parseInt(metadata.YResolution.value));
+                    if (dpi == null || dpi == undefined || dpi == NaN) {
+                        console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
+                        dpi = 72;
+                    }
+    
+                    if (metadata.ImageWidth == null || metadata.ImageWidth == undefined) {
+                        if (metadata.PixelXDimension == null || metadata.PixelXDimension == undefined) {
+                            var answer = readlineSync.question('The image does not contain any width or height info, do you want to inform them?[y/n]\n');
+                            if (answer == "y") {
+                                var answer2 = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
+    
+                                let vals = getValues(answer2, "wh");
+                                imageData.sizeX = vals.w;
+                                imageData.sizeY = vals.h;
+                            } else {
+                                console.log("It's not possible to proceed without width or height info!")
+                                process.exit(1);
+                            }
+                        } else {
+                            imageData.sizeX = metadata.PixelXDimension.value;
+                            imageData.sizeY = metadata.PixelYDimension.value;
+                        }
+                    } else {
+                        imageData.sizeX = metadata.ImageWidth.value;
+                        imageData.sizeY = metadata.ImageLength.value;
+                    }
+    
+                    if (metadata.SamplesPerPixel == null || metadata.ImageWidth == undefined) {
+                        // var answer = readlineSync.question('The image does not contain the number of channels(nc), do you want to inform it?[y/n]\n');
+    
+                        // if(answer == "y"){
+                        //     var answer2 = readlineSync.question('Inform the number of channels(nc):(black and white images have NC=1, colored images have NC=3) e.g NC=3 \n');
+    
+                        //     let vals = getValues(answer2, "nc");
+                        //     imageData.nc = vals;
+                        // }else{
+                        //     console.log("It's not possible to proceed without the number of channels!")
+                        //     process.exit(1);
+                        // }
+                    } else {
+                        imageData.nc = metadata.SamplesPerPixel.value;
+                    }
+                    imageData.dpi = dpi;
                 }
-                imageData.dpi = dpi;
             }
-        }
-    });
+            // console.log('extractExif resolve')
+            resolve(true);
+        });
+    })
+    
 }
 
 function usePNG(buf) {
@@ -328,6 +369,15 @@ function usePNG(buf) {
     imageData.sizeX = png.width;
     imageData.sizeY = png.height;
     imageData.dpi = 72;
+}
+
+function imageMagickIdentify(srcImage) {
+    return new Promise((resolve, reject) => {
+        im.identify(srcImage, function(err, features){
+            //console.log(err, features);
+            resolve({err: err, features: features});
+        })
+    })
 }
 
 function getValues(str, type) {
@@ -402,6 +452,7 @@ function rgbaToRgb(arr) {
 }
 
 function calculateQuality(){
+    // console.log('calculateQuality', imageData)
     let gray = toGrayscale(imageData.array);
     let hist = getHistogram(gray);
     let ent = 0;
@@ -414,6 +465,7 @@ function calculateQuality(){
     }
 
     let entropy = (-1 * ent).toFixed(2);
+    // console.log(entropy)
     let oldRange = (5.17 - 4.6);
     let newRange = (5 - 0);
     let level = (((entropy - 4.6) * newRange) / oldRange);
