@@ -212,6 +212,8 @@ Module.onRuntimeInitialized = async function(){
     
         console.log("Finished!\nTo run demo use: 'npm run demo'");
     }
+
+    process.exit(0);
 }
 
 async function useJPG(buf) {
