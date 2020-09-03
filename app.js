@@ -136,7 +136,7 @@ Module.onRuntimeInitialized = async function(){
 
     if(onlyConfidence) {
         console.log("%f", confidence.l);
-        process.exit(1);
+        process.exit(0);
     }
 
     console.log("\nConfidence level: [" + txt + "] %f/5 || Entropy: %f || Current max: 5.17 min: 4.6", confidence.l, confidence.e)
