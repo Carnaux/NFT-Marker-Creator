@@ -16,9 +16,16 @@ var validImageExt = [".jpg",".jpeg",".png"];
 
 var srcImage;
 
+var outputPath = '/output/';
+
 var buffer;
 
 var foundInputPath = {
+    b: false,
+    i: -1
+}
+
+var foundOutputPath = {
     b: false,
     i: -1
 }
@@ -48,6 +55,10 @@ Module.onRuntimeInitialized = async function(){
             noDemo = true;
         }else if(process.argv[j] == "-onlyConfidence"){
             onlyConfidence = true;
+        }else if(process.argv[j].indexOf('-o') !== -1 || process.argv[j].indexOf('-O') !== -1){
+            foundOutputPath.b = true;
+            foundOutputPath.i = j+1;
+            j++;
         }else {
             params.push(process.argv[j]);
         }
@@ -58,6 +69,16 @@ Module.onRuntimeInitialized = async function(){
         process.exit(1);
     }else{
         srcImage = path.join(__dirname, process.argv[foundInputPath.i]);
+    }
+
+    if(foundOutputPath.b){
+        // outputPath = path.join(__dirname, process.argv[foundOutputPath.i]);
+        outputPath = process.argv[foundOutputPath.i];
+        if(!outputPath.startsWith('/'))
+            outputPath = '/'+outputPath;
+        if(!outputPath.endsWith('/'))
+            outputPath += '/';
+        console.log('Set output path: ' + outputPath);
     }
 
     let fileNameWithExt = path.basename(srcImage);
@@ -84,8 +105,13 @@ Module.onRuntimeInitialized = async function(){
         buffer = fs.readFileSync(srcImage);
     }
 
-    if(!fs.existsSync(path.join(__dirname, '/output/'))){
-        fs.mkdirSync(path.join(__dirname, '/output/'));
+    
+    // if(!fs.existsSync(path.join(__dirname, '/output/'))){
+    //     fs.mkdirSync(path.join(__dirname, '/output/'));
+    // }
+    console.log('Check output path: ' + path.join(__dirname, outputPath));
+    if(!fs.existsSync(path.join(__dirname, outputPath))){
+        fs.mkdirSync(path.join(__dirname, outputPath));
     }
 
     if (extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg") {
@@ -150,9 +176,13 @@ Module.onRuntimeInitialized = async function(){
     let contentFset = Module.FS.readFile(filenameFset);
     let contentFset3 = Module.FS.readFile(filenameFset3);
 
-    fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext, content);
-    fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext2, contentFset);
-    fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext3, contentFset3);
+    // fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext, content);
+    // fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext2, contentFset);
+    // fs.writeFileSync(path.join(__dirname, '/output/') + fileName + ext3, contentFset3);
+
+    fs.writeFileSync(path.join(__dirname, outputPath) + fileName + ext, content);
+    fs.writeFileSync(path.join(__dirname, outputPath) + fileName + ext2, contentFset);
+    fs.writeFileSync(path.join(__dirname, outputPath) + fileName + ext3, contentFset3);
 
     if(!noDemo){
         console.log("\nFinished marker creation!\nNow configuring demo! \n")
