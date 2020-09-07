@@ -261,7 +261,7 @@ function extractExif(buf) {
                 if (metadata == null || metadata == undefined || Object.keys(metadata).length == undefined || Object.keys(metadata).length <= 0) {
                     // console.log(metadata);
                     let ret = await imageMagickIdentify(srcImage);
-                    //console.log('ret:', ret);
+                    console.log('ret:', ret);
                     {
                     if(ret.err){
                         console.log(ret.err);
@@ -302,11 +302,13 @@ function extractExif(buf) {
                             if(resolutions.length == 2) {
                                 dpi = Math.min(parseInt(resolutions[0]), parseInt(resolutions[1]));
                                 if (dpi == null || dpi == undefined || dpi == NaN) {
-                                    console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
+                                    // console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
                                     dpi = 72;
                                 }
                             }
                             
+                        } else {
+                            dpi = 72;
                         }
                         
                         imageData.dpi = dpi;
