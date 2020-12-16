@@ -8,6 +8,7 @@ const PNG = require('pngjs').PNG;
 var artoolkit_wasm_url = './libs/NftMarkerCreator_wasm.wasm';
 var Module = require('./libs/NftMarkerCreator_wasm.js');
 
+
 // GLOBAL VARs
 var params = [
 ];
@@ -49,11 +50,11 @@ Module.onRuntimeInitialized = async function(){
             foundInputPath.b = true;
             foundInputPath.i = j+1;
             j++;
-        }else if(process.argv[j] == "-noConf"){
+        }else if(process.argv[j] === "-noConf"){
             noConf = true;
-        }else if(process.argv[j] == "-noDemo"){
+        }else if(process.argv[j] === "-noDemo"){
             noDemo = true;
-        }else if(process.argv[j] == "-onlyConfidence"){
+        }else if(process.argv[j] === "-onlyConfidence"){
             onlyConfidence = true;
         }else if(process.argv[j].indexOf('-o') !== -1 || process.argv[j].indexOf('-O') !== -1){
             foundOutputPath.b = true;
@@ -114,9 +115,10 @@ Module.onRuntimeInitialized = async function(){
         fs.mkdirSync(path.join(__dirname, outputPath));
     }
 
-    if (extName.toLowerCase() == ".jpg" || extName.toLowerCase() == ".jpeg") {
+    if (extName.toLowerCase() === ".jpg" || extName.toLowerCase() === ".jpeg") {
+        //buffer= await sharp(srcImage).toBuffer();
         await useJPG(buffer)
-    } else if (extName.toLowerCase() == ".png") {
+    } else if (extName.toLowerCase() === ".png") {
         usePNG(buffer);
     }
     // console.log('Calculate Quality');
@@ -155,10 +157,12 @@ Module.onRuntimeInitialized = async function(){
 
     let StrBuffer = Module._malloc(paramStr.length + 1);
     Module.writeStringToMemory(paramStr, StrBuffer);
-      
+
+    console.log('Write Success');
     let heapSpace = Module._malloc(imageData.array.length * imageData.array.BYTES_PER_ELEMENT);
     Module.HEAPU8.set(imageData.array, heapSpace);
 
+    console.log('Setting Heap Success.. Continue to Create ImageSet..');
     Module._createImageSet(heapSpace, imageData.dpi, imageData.sizeX, imageData.sizeY, imageData.nc, StrBuffer)
     
     Module._free(heapSpace);
@@ -217,21 +221,21 @@ Module.onRuntimeInitialized = async function(){
 }
 
 async function useJPG(buf) {
-    
+
     inkjet.decode(buf, function (err, decoded) {
         if (err) {
-            console.log("\n" + err + "\n");
+            console.error("\n" + err + "\n");
             process.exit(1);
         } else {
             let newArr = [];
 
             let verifyColorSpace = detectColorSpace(decoded.data);
 
-            if (verifyColorSpace == 1) {
+            if (verifyColorSpace === 1) {
                 for (let j = 0; j < decoded.data.length; j += 4) {
                     newArr.push(decoded.data[j]);
                 }
-            } else if (verifyColorSpace == 3) {
+            } else if (verifyColorSpace === 3) {
                 for (let j = 0; j < decoded.data.length; j += 4) {
                     newArr.push(decoded.data[j]);
                     newArr.push(decoded.data[j + 1]);
@@ -252,14 +256,17 @@ async function useJPG(buf) {
 function extractExif(buf) {
     return new Promise((resolve, reject)=>{
         // console.log('extractExif')
+
+
+
         inkjet.exif(buf, async function (err, metadata) {
-            // console.log('exif')
             if (err) {
-                console.log("\n" + err + "\n");
+                console.error("\n    ERROR HAPPENED" + err + "\n");
                 process.exit(1);
-            } else {
-                if (metadata == null || metadata == undefined || Object.keys(metadata).length == undefined || Object.keys(metadata).length <= 0) {
-                    // console.log(metadata);
+            }
+            else {
+                if (metadata == null || Object.keys(metadata).length === undefined || Object.keys(metadata).length <= 0) {
+                     console.log(metadata);
                     let ret = await imageMagickIdentify(srcImage);
                     console.log('ret:', ret);
                     {
@@ -299,9 +306,9 @@ function extractExif(buf) {
                         let dpi = null;
                         if(resolution) {
                             let resolutions = resolution.split('x');
-                            if(resolutions.length == 2) {
+                            if(resolutions.length === 2) {
                                 dpi = Math.min(parseInt(resolutions[0]), parseInt(resolutions[1]));
-                                if (dpi == null || dpi == undefined || dpi == NaN) {
+                                if (dpi == null || isNaN(dpi)) {
                                     // console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
                                     dpi = 72;
                                 }
@@ -316,16 +323,18 @@ function extractExif(buf) {
                     }
                 }
                 } else {
-                    let dpi = Math.min(parseInt(metadata.XResolution.value), parseInt(metadata.YResolution.value));
-                    if (dpi == null || dpi == undefined || dpi == NaN) {
+                    console.log(metadata[ 'Image Width'].value)
+
+                    let dpi = Math.min(parseInt(metadata[ 'Image Width'].value), parseInt(metadata['Image Height'].value));
+                    if (dpi == null || isNaN(dpi)) {
                         console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
                         dpi = 72;
                     }
     
-                    if (metadata.ImageWidth == null || metadata.ImageWidth == undefined) {
-                        if (metadata.PixelXDimension == null || metadata.PixelXDimension == undefined) {
+                    if (metadata[ 'Image Width'] == null || metadata[ 'Image Width'] === undefined) {
+                        if (metadata[ 'Image Width'].value == null || metadata[ 'Image Width'].value === undefined) {
                             var answer = readlineSync.question('The image does not contain any width or height info, do you want to inform them?[y/n]\n');
-                            if (answer == "y") {
+                            if (answer === "y") {
                                 var answer2 = readlineSync.question('Inform the width and height: e.g W=200 H=400\n');
     
                                 let vals = getValues(answer2, "wh");
@@ -336,15 +345,15 @@ function extractExif(buf) {
                                 process.exit(1);
                             }
                         } else {
-                            imageData.sizeX = metadata.PixelXDimension.value;
-                            imageData.sizeY = metadata.PixelYDimension.value;
+                            imageData.sizeX = metadata[ 'Image Width'].value;
+                            imageData.sizeY = metadata['Image Height'].value;
                         }
                     } else {
-                        imageData.sizeX = metadata.ImageWidth.value;
-                        imageData.sizeY = metadata.ImageLength.value;
+                        imageData.sizeX = metadata[ 'Image Width'].value;
+                        imageData.sizeY = metadata['Image Height'].value;
                     }
     
-                    if (metadata.SamplesPerPixel == null || metadata.ImageWidth == undefined) {
+                    if (metadata[ 'Color Components'].value == null || metadata[ 'Image Width'].value === undefined) {
                         // var answer = readlineSync.question('The image does not contain the number of channels(nc), do you want to inform it?[y/n]\n');
     
                         // if(answer == "y"){
@@ -357,7 +366,8 @@ function extractExif(buf) {
                         //     process.exit(1);
                         // }
                     } else {
-                        imageData.nc = metadata.SamplesPerPixel.value;
+                       // imageData.nc = metadata[ 'Bits Per Sample'].value ;
+                        imageData.nc = metadata[ 'Color Components'].value ;
                     }
                     imageData.dpi = dpi;
                 }
@@ -384,11 +394,11 @@ function usePNG(buf) {
 
     let verifyColorSpace = detectColorSpace(data);
 
-    if (verifyColorSpace == 1) {
+    if (verifyColorSpace === 1) {
         for (let j = 0; j < data.length; j += 4) {
             newArr.push(data[j]);
         }
-    } else if (verifyColorSpace == 3) {
+    } else if (verifyColorSpace === 3) {
         for (let j = 0; j < data.length; j += 4) {
             newArr.push(data[j]);
             newArr.push(data[j + 1]);
@@ -443,6 +453,7 @@ function getValues(str, type) {
 }
 
 function detectColorSpace(arr) {
+
     let target = parseInt(arr.length / 4);
 
     let counter = 0;
@@ -452,12 +463,12 @@ function detectColorSpace(arr) {
         let g = arr[j + 1];
         let b = arr[j + 2];
 
-        if (r == g && r == b) {
+        if (r === g && r === b) {
             counter++;
         }
     }
 
-    if (target == counter) {
+    if (target === counter) {
         return 1;
     } else {
         return 3;

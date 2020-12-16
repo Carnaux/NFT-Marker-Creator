@@ -12,8 +12,8 @@
     "express": "^4.17.1",
     "glob": "^7.1.6",
     "imagemagick": "^0.1.3",
-    "inkjet": "^2.1.2",
-    "jpeg-js": "^0.4.0",
+    "inkjet": "^3.0.0",
+    "jpeg-js": "^0.4.2",
     "pngjs": "^3.4.0",
     "readline-sync": "^1.4.10"
   }
