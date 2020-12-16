@@ -64,6 +64,8 @@ e.g node app.js -i image.png -level=4 -min_thresh=8
     -min_dpi=<min_dpi>
     -background
          Run in background, i.e. as daemon detached from controlling terminal. (macOS and Linux only.)
+    -onlyConfidence
+          Indicates value of level of confidence
     --help -h -?  
           Display this help
    
