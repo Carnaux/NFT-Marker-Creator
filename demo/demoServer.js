@@ -10,6 +10,7 @@ app.get('/', function(request, response){
     response.sendFile(path.join(__dirname + '/nft.html'));
 });
 
+
 app.listen(3000)
 
 console.log("Demo running at http://localhost:3000/");
