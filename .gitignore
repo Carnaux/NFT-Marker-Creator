@@ -1,3 +1,4 @@
 node_modules
-build/libar.bc
-build/libjpeg.bc
+build/*.bc
+emscripten/artoolkit5/*
+

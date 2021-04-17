@@ -35,7 +35,7 @@
     "watch": "^0.18.0"
   },
   "scripts": {
-    "build": "node tools/makem.js; echo Built at `date`",
+    "build-local": "node tools/makem.js; echo Built at `date`",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/"
   },
   "license": "LGPL-3.0"

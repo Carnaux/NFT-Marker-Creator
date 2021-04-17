@@ -217,88 +217,8 @@ int EMSCRIPTEN_KEEPALIVE createImageSet(ARUint8 *imageIn, float dpiIn, int xsize
         usage("Marker Generator");
     }
 
-    //     } else if( strncmp(cmdArr[i], "-log=", 5) == 0 ) {
-    //         strncpy(logfile, &(cmdArr[i][5]), sizeof(logfile) - 1);
-    //         logfile[sizeof(logfile) - 1] = '\0'; // Ensure NULL termination.
-    //     } else if( strncmp(cmdArr[i], "-loglevel=", 10) == 0 ) {
-    //         if (strcmp(&(cmdArr[i][10]), "DEBUG") == 0) arLogLevel = AR_LOG_LEVEL_DEBUG;
-    //         else if (strcmp(&(cmdArr[i][10]), "INFO") == 0) arLogLevel = AR_LOG_LEVEL_INFO;
-    //         else if (strcmp(&(cmdArr[i][10]), "WARN") == 0) arLogLevel = AR_LOG_LEVEL_WARN;
-    //         else if (strcmp(&(cmdArr[i][10]), "ERROR") == 0) arLogLevel = AR_LOG_LEVEL_ERROR;
-    //         else usage(cmdArr[0]);
-    //     } else if (strcmp(cmdArr[i], "--help") == 0 || strcmp(cmdArr[i], "-h") == 0 || strcmp(cmdArr[i], "-?") == 0) {
-    //         usage(cmdArr[0]);
+    char *filename = "tempFilename";
 
-
-char *filename = "asa";
-
-// char * pathToWrite = (char *) malloc(1 + strlen(pathToFiles)+ strlen(filename) );
-// strcpy(pathToWrite, pathToFiles);
-// strcat(pathToWrite, filename);
-// printf("%s", pathToWrite);
-// ARLOGi("Filename: %s\n", filename);
-
-//     // Do some checks on the input.
-//     if (filename[0] == '\0') {
-//         ARLOGe("Error: no input file specified. Exiting.\n");
-//         usage(argv[0]);
-//     }
-//     sep = strrchr(filename, '.');
-//     if (!sep || (strcmp(sep, ".jpeg") && strcmp(sep, ".jpg") && strcmp(sep, ".jpe") && strcmp(sep, ".JPEG") && strcmp(sep, ".JPE") && strcmp(sep, ".JPG"))) {
-//         ARLOGe("Error: input file must be a JPEG image (with suffix .jpeg/.jpg/.jpe). Exiting.\n");
-//         usage(argv[0]);
-//     }
-//     if (background) {
-// #if HAVE_DAEMON_FUNC
-//         if (filename[0] != '/' || logfile[0] != '/' || exitcodefile[0] != '/') {
-//             ARLOGe("Error: -background flag requires full pathname of files (input, -log or -exitcode) to be specified. Exiting.\n");
-//             EXIT(E_BAD_PARAMETER);
-//         }
-//         if (tracking_extraction_level == -1 && (sd_thresh == -1.0 || min_thresh == -1.0 || max_thresh == -1.0)) {
-//             ARLOGe("Error: -background flag requires -level or -sd_thresh, -min_thresh and -max_thresh -to be set. Exiting.\n");
-//             EXIT(E_BAD_PARAMETER);
-//         }
-//         if (initialization_extraction_level == -1 && (featureDensity == -1)) {
-//             ARLOGe("Error: -background flag requires -leveli or -surf_thresh to be set. Exiting.\n");
-//             EXIT(E_BAD_PARAMETER);
-//         }
-//         if (dpi == -1.0) {
-//             ARLOGe("Error: -background flag requires -dpi to be set. Exiting.\n");
-//             EXIT(E_BAD_PARAMETER);
-//         }
-//         if (dpiMin != -1.0f && (dpiMin <= 0.0f || dpiMin > dpi)) {
-//             ARLOGe("Error: -min_dpi must be greater than 0 and less than or equal to -dpi. Exiting.n\n");
-//             EXIT(E_BAD_PARAMETER);
-//         }
-//         if (dpiMax != -1.0f && (dpiMax < dpiMin || dpiMax > dpi)) {
-//             ARLOGe("Error: -max_dpi must be greater than or equal to -min_dpi and less than or equal to -dpi. Exiting.n\n");
-//             EXIT(E_BAD_PARAMETER);
-//         }
-// #else
-//         ARLOGe("Error: -background flag not supported on this operating system. Exiting.\n");
-//         exit(E_BACKGROUND_OPERATION_UNSUPPORTED);
-// #endif
-//     }
-    
-//     if (background) {
-// #if HAVE_DAEMON_FUNC
-//         // Daemonize.
-//         if (daemon(0, 0) == -1) {
-//             perror("Unable to detach from controlling terminal");
-//             EXIT(E_UNABLE_TO_DETACH_FROM_CONTROLLING_TERMINAL);
-//         }
-//         // At this point, stdin, stdout and stderr point to /dev/null.
-// #endif
-//     }
-    
-//     if (logfile[0]) {
-//         if (!freopen(logfile, "a", stdout) ||
-//             !freopen(logfile, "a", stderr)) ARLOGe("Unable to redirect stdout or stderr to logfile.\n");
-//     }
-//     if (exitcodefile[0]) {
-//         atexit(write_exitcode);
-//     }
-    
     // Print the start date and time.
     clock = time(NULL);
     if (clock != (time_t)-1) {
