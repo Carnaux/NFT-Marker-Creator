@@ -7,7 +7,11 @@ A Node version (preferred) and Web version are provided.
 Check out the wiki to learn how to generate good markers! 
 https://github.com/Carnaux/NFT-Marker-Creator/wiki/Creating-good-markers
 
-If any errors occours please open a issue. 
+If any errors occours, please, open a issue. 
+
+## ZFT File
+
+The zft file compresses the iset, fset and fset3 files into one!
 
 ## Node version
 
@@ -46,10 +50,12 @@ You can use additional flags with the run command.
 
 e.g node app.js -i image.png -level=4 -min_thresh=8
 
+    -zft
+          Flag for creating only the zft file
     -noConf 
           Disable confirmation after the confidence level
-    -noDemo
-          Disable demo configuration
+    -Demo
+          Creates the demo configuration
     -level=n
          (n is an integer in range 0 (few) to 4 (many). Default 2.'
     -sd_thresh=<sd_thresh>
@@ -64,8 +70,6 @@ e.g node app.js -i image.png -level=4 -min_thresh=8
     -min_dpi=<min_dpi>
     -background
          Run in background, i.e. as daemon detached from controlling terminal. (macOS and Linux only.)
-    -onlyConfidence
-          Indicates value of level of confidence
     --help -h -?  
           Display this help
    
@@ -77,9 +81,9 @@ e.g node app.js -i image.png -level=4 -min_thresh=8
 
      - It should open a server at: http://localhost:3000/ 
 
-     If you want to disable the demo configuration when you create a marker, add `-noDemo` to the command parameters.
+     If you want to create the demo configuration when you create a marker, add `-Demo` to the command parameters.
 
-     e.g node app.js -i image.png -noDemo
+     e.g node app.js -i image.png -Demo
 
 # Web version
 
@@ -94,10 +98,9 @@ Advanced options coming soon.
 1. Upload any JPG/PNG image.
 2. If the Number of Channels is missing, it will ask for it.
 3. Click the generate button.
-4. The files will be automatically downloaded when the generation finishes.
+4. Choose between ZFT or the iset, fset, fset3 files.
+5. The files will be automatically downloaded when the generation finishes.
 
 ------
 #### If you want to generate you own NftMarkerCreator.min.js use the dev branch.
 
-
-"Icon made by Freepik from www.flaticon.com"
