@@ -359,12 +359,14 @@ function extractExif(buf) {
                     }
                 }
                 } else {
-                    let dpi = Math.min(parseInt(metadata['XResolution'].description), parseInt(metadata['YResolution'].description));
-                    if (dpi == 0 || dpi == null || isNaN(dpi)) {
-                        console.log("\nWARNING: No DPI value found! Using 72 as default value!\n")
-                        dpi = 72;
+                    let dpi = 72;
+
+                    if(parseInt(metadata['XResolution'] != null)){
+                        dpi = Math.min(parseInt(metadata['XResolution'].description), parseInt(metadata['YResolution'].description));
+                    }else{
+                        console.log("\nWARNING: No DPI value found! Using 72 as default value!\n");
                     }
-    
+
                     if (metadata['Image Width'] == null || metadata['Image Width'] === undefined) {
                         if (metadata['PixelXDimension'].value == null || metadata['PixelXDimension'].value === undefined) {
                             var answer = readlineSync.question('The image does not contain any width or height info, do you want to inform them?[y/n]\n');
