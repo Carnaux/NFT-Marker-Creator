@@ -122,7 +122,7 @@ FLAGS += ' -s FORCE_FILESYSTEM=1';
 // FLAGS += ' -s EXPORT_ES6=1';
 // FLAGS += ' -s USE_ES6_IMPORT_META=0';
 
-var WASM_FLAGS = ' -s BINARYEN_TRAP_MODE=clamp';
+var WASM_FLAGS = ' ';
 var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../emscripten/wasm_loader.js') +' ';
 
 var EXPORTED_FUNCTIONS = ' -s EXPORTED_FUNCTIONS=["_createImageSet"] -s EXTRA_EXPORTED_RUNTIME_METHODS=["FS, writeStringToMemory"] ';
@@ -171,7 +171,7 @@ function clean_builds() {
 
 var compile_arlib = format(EMCC + ' ' + INCLUDES + ' '
 	+ ar_sources.join(' ')
-	+ FLAGS + ' ' + DEFINES + ' -o {OUTPUT_PATH}libar.bc ',
+	+ FLAGS + ' ' + DEFINES + ' -r -o {OUTPUT_PATH}libar.bc ',
 		OUTPUT_PATH);
 
  var compile_kpm = format(EMCC + ' ' + INCLUDES + ' '
