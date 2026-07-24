@@ -2,7 +2,6 @@ demo/public/marker/*
 node_modules/*
 input/*
 output/*
-package-lock.json
 .vscode/*
 .idea/*
 
